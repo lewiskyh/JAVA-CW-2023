@@ -1,3 +1,4 @@
+
 package edu.uob;
 
 import java.io.*;
@@ -23,10 +24,7 @@ public class DBTable {
         this.tableName = "";
         this.attributes = new ArrayList<>();
         this.entries = new ArrayList<>();
-<<<<<<< HEAD
-=======
         this.numberOfEntries = 0;
->>>>>>> main
         this.databaseFolderPath = databaseFolderPath;
         this.tableFilePath = databaseFolderPath + File.separator + this.tableName + ".tab";
     }
@@ -114,11 +112,7 @@ public class DBTable {
                 }
             }
             this.entries.clear();
-<<<<<<< HEAD
-            while((line = bufferedReader.readLine()) != null){
-=======
             while((line = bufferedReader.readLine()) != null && !line.trim().isEmpty()){
->>>>>>> main
                 processRows(line);
             }
         } catch (IOException ioe) {
@@ -133,14 +127,9 @@ public class DBTable {
             String data = i < row.length ? row[i] : "";
             rowMap.put(this.attributes.get(i), data);
         }
-<<<<<<< HEAD
-    }
-    public void writeToTable() throws IOException {
-=======
         addEntry(rowMap);
     }
     public void writeTable() throws IOException {
->>>>>>> main
         File writeFile = new File(this.tableFilePath);
         writeFile.createNewFile();
         if (!writeFile.exists()) {

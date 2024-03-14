@@ -117,27 +117,12 @@ public class DBTableTests {
 
     @Test
     public void testReadFromTable(){
-<<<<<<< HEAD
-        //print database filepath
-        System.out.println(database.getDatabaseFolderPath());
-        //print people filepath
-        System.out.println(table.getTableFilePath());
-        // set table to people table
         table.setTable("people");
-        System.out.println(table.getTableFilePath());
-=======
-        table.setTable("people");
->>>>>>> main
         try {
             table.readFromTable();
         } catch (Exception e) {
             e.printStackTrace();
         }
-<<<<<<< HEAD
-
-    }
-
-=======
         assertEquals(3, table.getNumberOfEntries());
         assertEquals(4, table.getNumberOfAttributes());
         //Assert getEnrtyByKey get the expected result
@@ -176,5 +161,4 @@ public class DBTableTests {
 
 
 
->>>>>>> main
 }

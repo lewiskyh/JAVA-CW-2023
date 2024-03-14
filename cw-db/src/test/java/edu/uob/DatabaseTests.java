@@ -12,22 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DatabaseTests {
     private Database database;
-<<<<<<< HEAD
-
-
-=======
->>>>>>> main
     private DBTable table;
 
 
 
     @BeforeEach
     public void setUp() {
-<<<<<<< HEAD
-=======
         this.database = new Database("lewis");
         this.table = new DBTable(this.database.getDatabaseFolderPath());
->>>>>>> main
 
     }
     //Test getDatabaseName
@@ -47,24 +39,19 @@ public class DatabaseTests {
     //Test addDBTable - by adding 2 tables
     public void testAddDBTable() throws IOException {
 
-         //Create a table class
-         DBTable table1 = new DBTable(this.database.getDatabaseFolderPath(), "table1");
-         this.database.addDBTable(table1);
-         DBTable table2 = new DBTable(this.database.getDatabaseFolderPath(), "table2");
-         this.database.addDBTable(table2);
-         //Assert table1 and 2 are included in the mapsOfTables
+        //Create a table class
+        DBTable table1 = new DBTable(this.database.getDatabaseFolderPath(), "table1");
+        this.database.addDBTable(table1);
+        DBTable table2 = new DBTable(this.database.getDatabaseFolderPath(), "table2");
+        this.database.addDBTable(table2);
+        //Assert table1 and 2 are included in the mapsOfTables
         assertEquals(table1, this.database.getDBTable("table1"));
         assertEquals(table2, this.database.getDBTable("table2"));
     }
 
-<<<<<<< HEAD
-    //Test setupDatabase
-    /*public void testSetupDatabase() throws IOException {
-=======
     @Test
     //Test setupDatabase
     public void testSetupDatabase() throws IOException {
->>>>>>> main
         //Write a table to the lewis database
         DBTable newTable = new DBTable(this.database.getDatabaseFolderPath(), "newTable");
         //Write attributes
@@ -90,7 +77,7 @@ public class DatabaseTests {
         assertEquals("people",this.database.getDBTable("people").getTableName());
         assertEquals("sheds",this.database.getDBTable("sheds").getTableName());
 
-    }*/
+    }
 
 
 

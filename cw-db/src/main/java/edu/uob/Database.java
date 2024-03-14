@@ -46,12 +46,7 @@ public class Database {
         return this.mapsOfTables.get(tableName);
     }
 
-<<<<<<< HEAD
-    public void addDBTable(DBTable table) throws IOException {
-        DBTable newTable = new DBTable(table.getTableName());
-=======
     public void addDBTable(DBTable table) {
->>>>>>> main
         this.mapsOfTables.put(table.getTableName(), table);
     }
 

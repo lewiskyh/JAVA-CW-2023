@@ -2,11 +2,6 @@ package edu.uob;
 
 import java.util.ArrayList;
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> main
 public class Tokeniser {
 
     private String query;
@@ -20,24 +15,6 @@ public class Tokeniser {
     public Tokeniser(String query) {
         this.query = query;
         //The index 0 is always the command keyword
-<<<<<<< HEAD
-        this.tokenIndex = 1;
-        this.tokens = new ArrayList<>();
-    }
-
-    public String getTokenAtCurrentIndex() {
-        return tokens.get(this.tokenIndex);
-    }
-}
-
-    /*public String getTokenAtNextIndex() {
-        if (this.tokenIndex < this.tokens.size()) {
-            this.tokenIndex++;
-            return tokens.get(this.tokenIndex++);
-        }
-    }*/
-
-=======
         this.tokenIndex = 0;
         this.tokens = new ArrayList<>();
     }
@@ -67,8 +44,8 @@ public class Tokeniser {
         } else {
             for (String specialCharacter : specialCharacters) {
                 fragment = fragment.replace(specialCharacter, " " + specialCharacter + " ");
-                }
             }
+        }
         // Split into tokens taking into account special characters
         String [] fragmentTokens = fragment.split("\\s+");
         for (String token : fragmentTokens) {
@@ -78,4 +55,3 @@ public class Tokeniser {
         }
     }
 }
->>>>>>> main
