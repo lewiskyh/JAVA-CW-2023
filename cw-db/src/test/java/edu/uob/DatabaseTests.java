@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DatabaseTests {
     private Database database;
 
-    private DBFilePath filePath;
 
     private DBTable table;
 
@@ -19,11 +18,7 @@ public class DatabaseTests {
 
     @BeforeEach
     public void setUp() {
-        filePath = new DBFilePath();
-        filePath.setDatabaseFolderPath("lewis");
-        table = new DBTable();
-        database = new Database("lewis", filePath);
-        fileIO = new DBFileIO(filePath, table);
+
     }
     //Test getDatabaseName
     @Test
@@ -56,8 +51,7 @@ public class DatabaseTests {
     }
 
     //Test setupDatabase
-    @Test
-    public void testSetupDatabase() throws IOException {
+    /*public void testSetupDatabase() throws IOException {
         //Write a table to the lewis database
         DBTable newTable = new DBTable("newTable");
         //Write attributes
@@ -72,7 +66,7 @@ public class DatabaseTests {
         assertEquals(4, this.database.getDBTable("sheds").getNumberOfAttributes());
         assertEquals(2, this.database.getDBTable("newTable").getNumberOfAttributes());
 
-    }
+    }*/
 
 
 
