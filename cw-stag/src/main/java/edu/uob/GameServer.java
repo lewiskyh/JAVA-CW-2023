@@ -64,13 +64,8 @@ public final class GameServer {
         /*location subgraphs must be the 1st subgraph*/
         ArrayList<Graph> locations = wholeDocument.getSubgraphs().get(0).getSubgraphs();
 
-        /*Starting location of the game must be in the first cluster of locations*/
-        Graph startingLocationGraph = locations.get(0);
-        parseLocation(startingLocationGraph);
-
-        //Parse the rest of locations
-        for (int i = 1; i < locations.size(); i++){
-            Graph locationGraph = locations.get(i);
+        //Parse the location graphs and add to the location list
+        for (Graph locationGraph : locations) {
             parseLocation(locationGraph);
         }
 
