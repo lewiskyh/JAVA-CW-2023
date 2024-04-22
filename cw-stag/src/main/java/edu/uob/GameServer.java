@@ -90,7 +90,7 @@ public final class GameServer {
             if(from != null && to != null){
                 from.addPath(to);
             }
-            else { throw new RuntimeException("Location not found when setting paths"); }
+            else { throw new RuntimeException("From/To Location not found when setting paths"); }
         }
     }
 
