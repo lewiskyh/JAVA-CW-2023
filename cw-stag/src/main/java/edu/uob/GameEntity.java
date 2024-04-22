@@ -1,9 +1,11 @@
 package edu.uob;
 
-public abstract class GameEntity
-{
-    private String name;
-    private String description;
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class GameEntity {
+    private final String name;
+    private final String description;
 
     public GameEntity(String name, String description)
     {
@@ -20,4 +22,8 @@ public abstract class GameEntity
     {
         return description;
     }
+
+
+
+
 }
