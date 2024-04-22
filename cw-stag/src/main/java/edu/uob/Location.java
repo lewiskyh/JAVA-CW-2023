@@ -17,7 +17,7 @@ public class Location extends GameEntity{
         artefactList = new ArrayList<Artefact>();
         characterList = new ArrayList<Character>();
         furnitureList = new ArrayList<Furniture>();
-        pathList = new ArrayList<Location>();
+        pathList = new ArrayList<Location>(); /* Path to another location */
     }
 
     public void addArtefact(Artefact artefact){
@@ -35,5 +35,7 @@ public class Location extends GameEntity{
     public void addPath(Location path){
         pathList.add(path);
     }
+
+    public String getName(){ return super.getName(); }
 
 }

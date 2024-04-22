@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.alexmerz.graphviz.Parser;
@@ -21,9 +22,9 @@ public final class GameServer {
 
     private Location startingLocation;
     private Location storeroom;
-    private List<GameEntity> entities = new ArrayList<>();
+    private HashMap <String, GameEntity> entities = new HashMap<>();
 
-    private List<Location> gameLocations = new ArrayList<>();
+    private HashMap<String, Location> gameLocations = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
@@ -74,12 +75,30 @@ public final class GameServer {
         }
 
         /*Path subgraphs must appear after the locations*/
-        Graph paths = wholeDocument.getSubgraphs().get(1);
+        Graph pathGraph = wholeDocument.getSubgraphs().get(1);
+        /*Parse the paths and store them in the corresponding location object*/
+        parsePaths(pathGraph);
     }
 
-    private void parsePaths (Graph paths){
+    private void parsePaths (Graph pathGraph) {
+        //Get the path and add to the corresponding location
+        ArrayList<Edge> paths = pathGraph.getEdges();
+        for (Edge path : paths) {
+            Node fromLocation = path.getSource().getNode();
+            String fromName = fromLocation.getId().getId();
+            Node toLocation = path.getTarget().getNode();
+            String toName = toLocation.getId().getId();
 
+            //Get the location objects from the gameLocations hashmap
+            Location from = gameLocations.get(fromName);
+            Location to = gameLocations.get(toName);
+            if(from != null && to != null){
+                from.addPath(to);
+            }
+            else { throw new RuntimeException("Location not found when setting paths"); }
+        }
     }
+
     /**
      * Parse the graph for location and add to location and enetity list of server
      * @param locationGraph The graph object for a location in the DOT file
@@ -92,11 +111,11 @@ public final class GameServer {
         Location location = new Location(locationName, description);
 
         /*Add the location to the list of starting entities*/
-        this.entities.add(location);
+        this.entities.put(locationName,location);
         /*Set the location as the starting location if it is the first location*/
         if (this.startingLocation == null){ this.startingLocation = location; }
         /*Add the location to the list of game locations*/
-        this.gameLocations.add(location);
+        this.gameLocations.put(locationName, location);
 
         /*Parse the contents of the location*/
         parseContentsOfLocation(locationGraph, location);
@@ -116,17 +135,17 @@ public final class GameServer {
             switch (type){
                 case "artefact":
                     Artefact artefact = new Artefact(name, description);
-                    this.entities.add(artefact);
+                    this.entities.put(name,artefact);
                     location.addArtefact(artefact);
                     break;
                 case "character":
                     Character character = new Character(name, description);
-                    this.entities.add(character);
+                    this.entities.put(name,character);
                     location.addCharacter(character);
                     break;
                 case "furniture":
                     Furniture furniture = new Furniture(name, description);
-                    this.entities.add(furniture);
+                    this.entities.put(name,furniture);
                     location.addFurniture(furniture);
                     break;
             }
