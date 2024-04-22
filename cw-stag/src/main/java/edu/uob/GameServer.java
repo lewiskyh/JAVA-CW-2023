@@ -1,18 +1,29 @@
 package edu.uob;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.alexmerz.graphviz.Parser;
+import com.alexmerz.graphviz.ParseException;
+import com.alexmerz.graphviz.objects.Graph;
+import com.alexmerz.graphviz.objects.Node;
+import com.alexmerz.graphviz.objects.Edge;
+
+
 
 public final class GameServer {
 
     private static final char END_OF_TRANSMISSION = 4;
+
+    private Location startingLocation;
+    private Location storeroom;
+    private List<GameEntity> entities = new ArrayList<>();
+
+    private List<Location> gameLocations = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
@@ -29,7 +40,97 @@ public final class GameServer {
     * @param actionsFile The game configuration file containing all game actions to use in your game
     */
     public GameServer(File entitiesFile, File actionsFile) {
-        // TODO implement your server logic here
+        try{
+            readEntityFile(entitiesFile);
+        }catch(IOException | ParseException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Read the entities file and parse the entities.
+     * @param entitiesFile The game configuration file containing all game entities to use in your game
+     * @throws IOException
+     * @throws ParseException
+     */
+
+    private void readEntityFile(File entitiesFile) throws IOException, ParseException {
+        Parser parser = new Parser();
+        FileReader reader = new FileReader(entitiesFile);
+        parser.parse(reader);
+        /*Get the whole document from the first <graph> tag*/
+        Graph wholeDocument = parser.getGraphs().get(0);
+        /*location subgraphs must be the 1st subgraph*/
+        ArrayList<Graph> locations = wholeDocument.getSubgraphs().get(0).getSubgraphs();
+
+        /*Starting location of the game must be in the first cluster of locations*/
+        Graph startingLocationGraph = locations.get(0);
+        parseLocation(startingLocationGraph);
+
+        //Parse the rest of locations
+        for (int i = 1; i < locations.size(); i++){
+            Graph locationGraph = locations.get(i);
+            parseLocation(locationGraph);
+        }
+
+        /*Path subgraphs must appear after the locations*/
+        Graph paths = wholeDocument.getSubgraphs().get(1);
+    }
+
+    private void parsePaths (Graph paths){
+
+    }
+    /**
+     * Parse the graph for location and add to location and enetity list of server
+     * @param locationGraph The graph object for a location in the DOT file
+     */
+
+    private void parseLocation (Graph locationGraph){
+        Node locationDetails = locationGraph.getNodes(false).get(0);
+        String locationName = locationDetails.getId().getId();
+        String description = locationDetails.getAttribute("description");
+        Location location = new Location(locationName, description);
+
+        /*Add the location to the list of starting entities*/
+        this.entities.add(location);
+        /*Set the location as the starting location if it is the first location*/
+        if (this.startingLocation == null){ this.startingLocation = location; }
+        /*Add the location to the list of game locations*/
+        this.gameLocations.add(location);
+
+        /*Parse the contents of the location*/
+        parseContentsOfLocation(locationGraph, location);
+    }
+    /**
+     * Parse the contents of the location and add to the location object and add to entity list of server
+     * @param locationGraph The graph object for the location in the DOT file
+     * @param location The location object to add the contents to
+     */
+
+    private void parseContentsOfLocation (Graph locationGraph, Location location){
+        List<Node> locationContents = locationGraph.getNodes(true);
+        for (Node content : locationContents){
+            String type = content.getId().getId();
+            String name = content.getAttribute("name");
+            String description = content.getAttribute("description");
+            switch (type){
+                case "artefact":
+                    Artefact artefact = new Artefact(name, description);
+                    this.entities.add(artefact);
+                    location.addArtefact(artefact);
+                    break;
+                case "character":
+                    Character character = new Character(name, description);
+                    this.entities.add(character);
+                    location.addCharacter(character);
+                    break;
+                case "furniture":
+                    Furniture furniture = new Furniture(name, description);
+                    this.entities.add(furniture);
+                    location.addFurniture(furniture);
+                    break;
+            }
+        }
     }
 
     /**

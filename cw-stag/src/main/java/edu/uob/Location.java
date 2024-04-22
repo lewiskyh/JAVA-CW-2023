@@ -20,4 +20,20 @@ public class Location extends GameEntity{
         pathList = new ArrayList<Location>();
     }
 
+    public void addArtefact(Artefact artefact){
+        artefactList.add(artefact);
+    }
+
+    public void addCharacter(Character character){
+        characterList.add(character);
+    }
+
+    public void addFurniture(Furniture furniture){
+        furnitureList.add(furniture);
+    }
+
+    public void addPath(Location path){
+        pathList.add(path);
+    }
+
 }
