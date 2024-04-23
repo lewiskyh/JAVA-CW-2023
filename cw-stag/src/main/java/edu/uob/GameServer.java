@@ -58,7 +58,9 @@ public final class GameServer {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = builder.parse(actionsFile);
         Element root = document.getDocumentElement();
-        NodeList actions = root.getChildNodes();
+        NodeList nodes = root.getChildNodes();
+        for(int i = 0; i <nodes.getLength(); i++){
+        }
 
     }
 
