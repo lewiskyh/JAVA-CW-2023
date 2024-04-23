@@ -60,7 +60,8 @@ public final class GameServer {
         parser.parse(reader);
         /*Get the whole document from the first <graph> tag*/
         Graph wholeDocument = parser.getGraphs().get(0);
-        /*location subgraphs must be the 1st subgraph*/
+
+        /*locations must be the 1st subgraph*/
         ArrayList<Graph> locations = wholeDocument.getSubgraphs().get(0).getSubgraphs();
 
         //Parse the location graphs and add to the location list
@@ -122,29 +123,40 @@ public final class GameServer {
      */
 
     public void parseContentsOfLocation (Graph locationGraph, Location location){
-        ArrayList<Graph> locationContents = locationGraph.getSubgraphs();
-        for (Graph content : locationContents){
-            String type = content.getId().getId();
-            System.out.println("Type: " + type);
-            String name = content.getAttribute("name");
-            System.out.println("Name: " + name);
-            String description = content.getAttribute("description");
-            switch (type){
+
+        ArrayList<Graph> locationEntities = locationGraph.getSubgraphs();
+
+        for (Graph entity : locationEntities){
+            String entityType = entity.getId().getId();
+            ArrayList<Node> nodeofEntity = entity.getNodes(false);
+
+            switch (entityType){
                 case "artefacts":
-                    Artefact artefact = new Artefact(name, description);
-                    this.entities.put(name,artefact);
-                    location.addArtefact(artefact);
-                    System.out.println("Added artefact: " + name);
+                    for(Node artefact : nodeofEntity){
+                        String name = artefact.getId().getId();
+                        String description = artefact.getAttribute("description");
+                        Artefact artefactObject = new Artefact(name, description);
+                        this.entities.put(name,artefactObject);
+                        location.addArtefact(artefactObject);
+                    }
                     break;
                 case "characters":
-                    Character character = new Character(name, description);
-                    this.entities.put(name,character);
-                    location.addCharacter(character);
+                    for (Node character : nodeofEntity){
+                        String name = character.getId().getId();
+                        String description = character.getAttribute("description");
+                        Character characterObject = new Character(name, description);
+                        this.entities.put(name,characterObject);
+                        location.addCharacter(characterObject);
+                    }
                     break;
                 case "furniture":
-                    Furniture furniture = new Furniture(name, description);
-                    this.entities.put(name,furniture);
-                    location.addFurniture(furniture);
+                    for (Node furniture : nodeofEntity){
+                        String name = furniture.getId().getId();
+                        String description = furniture.getAttribute("description");
+                        Furniture furnitureObject = new Furniture(name, description);
+                        this.entities.put(name,furnitureObject);
+                        location.addFurniture(furnitureObject);
+                    }
                     break;
                 default:
                     throw new RuntimeException("Unknown type of entity found in location");
