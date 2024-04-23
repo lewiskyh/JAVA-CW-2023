@@ -21,7 +21,6 @@ public final class GameServer {
     private static final char END_OF_TRANSMISSION = 4;
 
     private Location startingLocation;
-    private Location storeroom;
     private HashMap <String, GameEntity> entities = new HashMap<>();
 
     private HashMap<String, Location> gameLocations = new HashMap<>();
@@ -55,7 +54,7 @@ public final class GameServer {
      * @throws ParseException
      */
 
-    private void readEntityFile(File entitiesFile) throws IOException, ParseException {
+    public void readEntityFile(File entitiesFile) throws IOException, ParseException {
         Parser parser = new Parser();
         FileReader reader = new FileReader(entitiesFile);
         parser.parse(reader);
@@ -75,7 +74,7 @@ public final class GameServer {
         parsePaths(pathGraph);
     }
 
-    private void parsePaths (Graph pathGraph) {
+    public void parsePaths (Graph pathGraph) {
         //Get the path and add to the corresponding location
         ArrayList<Edge> paths = pathGraph.getEdges();
         for (Edge path : paths) {
@@ -99,7 +98,7 @@ public final class GameServer {
      * @param locationGraph The graph object for a location in the DOT file
      */
 
-    private void parseLocation (Graph locationGraph){
+    public void parseLocation (Graph locationGraph){
         Node locationDetails = locationGraph.getNodes(false).get(0);
         String locationName = locationDetails.getId().getId();
         String description = locationDetails.getAttribute("description");
@@ -107,13 +106,14 @@ public final class GameServer {
 
         /*Add the location to the list of starting entities*/
         this.entities.put(locationName,location);
-        /*Set the location as the starting location if it is the first location*/
-        if (this.startingLocation == null){ this.startingLocation = location; }
-        /*Add the location to the list of game locations*/
-        this.gameLocations.put(locationName, location);
 
         /*Parse the contents of the location*/
         parseContentsOfLocation(locationGraph, location);
+
+        /*Add the location to the list of game locations*/
+        this.gameLocations.put(locationName, location);
+        /*Set the location as the starting location if it is the first location*/
+        if (this.startingLocation == null){ this.startingLocation = location; }
     }
     /**
      * Parse the contents of the location and add to the location object and add to entity list of server
@@ -121,19 +121,22 @@ public final class GameServer {
      * @param location The location object to add the contents to
      */
 
-    private void parseContentsOfLocation (Graph locationGraph, Location location){
-        List<Node> locationContents = locationGraph.getNodes(true);
-        for (Node content : locationContents){
+    public void parseContentsOfLocation (Graph locationGraph, Location location){
+        ArrayList<Graph> locationContents = locationGraph.getSubgraphs();
+        for (Graph content : locationContents){
             String type = content.getId().getId();
+            System.out.println("Type: " + type);
             String name = content.getAttribute("name");
+            System.out.println("Name: " + name);
             String description = content.getAttribute("description");
             switch (type){
-                case "artefact":
+                case "artefacts":
                     Artefact artefact = new Artefact(name, description);
                     this.entities.put(name,artefact);
                     location.addArtefact(artefact);
+                    System.out.println("Added artefact: " + name);
                     break;
-                case "character":
+                case "characters":
                     Character character = new Character(name, description);
                     this.entities.put(name,character);
                     location.addCharacter(character);
@@ -143,9 +146,18 @@ public final class GameServer {
                     this.entities.put(name,furniture);
                     location.addFurniture(furniture);
                     break;
+                default:
+                    throw new RuntimeException("Unknown type of entity found in location");
+
             }
         }
     }
+
+    public GameEntity getEntity (String enentityName){ return this.entities.get(enentityName); }
+
+    public Location getLocation (String locationName){ return this.gameLocations.get(locationName);}
+
+    public Location getStartingLocation(){ return this.startingLocation; }
 
     /**
     * Do not change the following method signature or we won't be able to mark your submission
