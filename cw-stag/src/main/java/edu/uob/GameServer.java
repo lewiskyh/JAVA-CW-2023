@@ -14,6 +14,14 @@ import com.alexmerz.graphviz.objects.Graph;
 import com.alexmerz.graphviz.objects.Node;
 import com.alexmerz.graphviz.objects.Edge;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 
 public final class GameServer {
@@ -21,8 +29,7 @@ public final class GameServer {
     private static final char END_OF_TRANSMISSION = 4;
 
     private Location startingLocation;
-    private HashMap <String, GameEntity> entities = new HashMap<>();
-
+    private ArrayList<String> existingEntityName = new ArrayList<>();
     private HashMap<String, Location> gameLocations = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
@@ -47,6 +54,14 @@ public final class GameServer {
         }
     }
 
+    public void readActionFile (File actionsFile) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document document = builder.parse(actionsFile);
+        Element root = document.getDocumentElement();
+        NodeList actions = root.getChildNodes();
+
+    }
+
     /**
      * Read the entities file and parse the entities.
      * @param entitiesFile The game configuration file containing all game entities to use in your game
@@ -66,16 +81,16 @@ public final class GameServer {
 
         //Parse the location graphs and add to the location list
         for (Graph locationGraph : locations) {
-            parseLocation(locationGraph);
+            interpretLocation(locationGraph);
         }
 
         /*Path subgraphs must appear after the locations*/
         Graph pathGraph = wholeDocument.getSubgraphs().get(1);
         /*Parse the paths and store them in the corresponding location object*/
-        parsePaths(pathGraph);
+        interpretPaths(pathGraph);
     }
 
-    public void parsePaths (Graph pathGraph) {
+    public void interpretPaths (Graph pathGraph) {
         //Get the path and add to the corresponding location
         ArrayList<Edge> paths = pathGraph.getEdges();
         for (Edge path : paths) {
@@ -99,17 +114,17 @@ public final class GameServer {
      * @param locationGraph The graph object for a location in the DOT file
      */
 
-    public void parseLocation (Graph locationGraph){
+    public void interpretLocation (Graph locationGraph){
         Node locationDetails = locationGraph.getNodes(false).get(0);
         String locationName = locationDetails.getId().getId();
         String description = locationDetails.getAttribute("description");
         Location location = new Location(locationName, description);
 
         /*Add the location to the list of starting entities*/
-        this.entities.put(locationName,location);
+        this.existingEntityName.add(locationName);
 
         /*Parse the contents of the location*/
-        parseContentsOfLocation(locationGraph, location);
+        interpretEntitiesOfLocation(locationGraph, location);
 
         /*Add the location to the list of game locations*/
         this.gameLocations.put(locationName, location);
@@ -122,7 +137,7 @@ public final class GameServer {
      * @param location The location object to add the contents to
      */
 
-    public void parseContentsOfLocation (Graph locationGraph, Location location){
+    public void interpretEntitiesOfLocation (Graph locationGraph, Location location){
 
         ArrayList<Graph> locationEntities = locationGraph.getSubgraphs();
 
@@ -136,7 +151,7 @@ public final class GameServer {
                         String name = artefact.getId().getId();
                         String description = artefact.getAttribute("description");
                         Artefact artefactObject = new Artefact(name, description);
-                        this.entities.put(name,artefactObject);
+                        this.existingEntityName.add(name);
                         location.addArtefact(artefactObject);
                     }
                     break;
@@ -145,7 +160,7 @@ public final class GameServer {
                         String name = character.getId().getId();
                         String description = character.getAttribute("description");
                         Character characterObject = new Character(name, description);
-                        this.entities.put(name,characterObject);
+                        this.existingEntityName.add(name);
                         location.addCharacter(characterObject);
                     }
                     break;
@@ -154,7 +169,7 @@ public final class GameServer {
                         String name = furniture.getId().getId();
                         String description = furniture.getAttribute("description");
                         Furniture furnitureObject = new Furniture(name, description);
-                        this.entities.put(name,furnitureObject);
+                        this.existingEntityName.add(name);
                         location.addFurniture(furnitureObject);
                     }
                     break;
@@ -165,7 +180,9 @@ public final class GameServer {
         }
     }
 
-    public GameEntity getEntity (String enentityName){ return this.entities.get(enentityName); }
+    public Boolean checkEntityAlreadyExists (String enentityName){
+        return this.existingEntityName.contains(enentityName);
+    }
 
     public Location getLocation (String locationName){ return this.gameLocations.get(locationName);}
 
