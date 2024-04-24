@@ -4,10 +4,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import com.alexmerz.graphviz.Parser;
 import com.alexmerz.graphviz.ParseException;
@@ -30,6 +27,8 @@ public final class GameServer {
     private static final char END_OF_TRANSMISSION = 4;
 
     private Location startingLocation;
+
+    private Map<String, Set<GameAction>> actionHashMap;
     private ArrayList<String> existingEntityName = new ArrayList<>();
     private HashMap<String, Location> gameLocations = new HashMap<>();
 
@@ -53,48 +52,78 @@ public final class GameServer {
         }catch(IOException | ParseException e){
             throw new RuntimeException(e);
         }
+        try {
+            this.actionHashMap = readActionFile(actionsFile);
+        }catch (IOException | ParserConfigurationException | SAXException e){
+            throw new RuntimeException(e);
+        }
     }
 
-    public void readActionFile (File actionsFile) throws ParserConfigurationException, IOException, SAXException {
+    public Map<String, Set<GameAction>> readActionFile (File actionsFile) throws ParserConfigurationException, IOException, SAXException {
+        Map<String, Set<GameAction>> actionHashMap = new HashMap<>();
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = builder.parse(actionsFile);
         Element root = document.getDocumentElement();
         NodeList actions = root.getElementsByTagName("action");
+        Set<String> triggers = new HashSet<>();
+        fillTriggerSet(triggers, actions);
+        for(String trigger : triggers){
+            actionHashMap.put(trigger, new HashSet<>());
+        }
         for(int i = 0; i <actions.getLength(); i++){
             Element actionElement = (Element) actions.item(i);
             GameAction action = new GameAction();
-            addActionDetailsByTag(actionElement, "subjects", "entity",action);
-            addActionDetailsByTag(actionElement, "produced", "entity", action);
-            addActionDetailsByTag(actionElement, "consumed", "entity", action);
-            addActionDetailsByTag(actionElement, "triggers", "keyphrase", action);
+            addActionDetailsByTag(actionElement, "subjects", "entity", action, actionHashMap);
+            addActionDetailsByTag(actionElement, "produced", "entity", action, actionHashMap);
+            addActionDetailsByTag(actionElement, "consumed", "entity", action, actionHashMap);
+            addActionDetailsByTag(actionElement, "triggers", "keyphrase", action, actionHashMap);
             String narration = actionElement.getElementsByTagName("narration").item(0).getTextContent().trim();
             action.addNarration(narration);
         }
 
+        return actionHashMap;
     }
 
-    public void addActionDetailsByTag (Element actionElement, String tagName, String childTag,GameAction action){
+    public void fillTriggerSet (Set<String> triggers, NodeList actions){
+        for(int i = 0; i < actions.getLength(); i++){
+            Element actionElement = (Element) actions.item(i);
+            Element triggersElement = (Element) actionElement.getElementsByTagName("triggers").item(0);
+            NodeList triggerNodeList = triggersElement.getElementsByTagName("keyphrase");
+            for(int j = 0; j < triggerNodeList.getLength(); j++){
+                Element triggerNode = (Element) triggerNodeList.item(j);
+                triggers.add(triggerNode.getTextContent().trim());
+            }
+        }
+    }
+
+    public void addActionDetailsByTag (Element actionElement, String tagName, String childTag,GameAction action,
+                                       Map<String, Set<GameAction>> actionHashMap){
         Element elemntChild = (Element) actionElement.getElementsByTagName(tagName).item(0);
         NodeList childNodeList = elemntChild.getElementsByTagName(childTag);
         for(int i = 0; i < childNodeList.getLength(); i++){
-            Element subjectNode = (Element) childNodeList.item(i);
+            Element node = (Element) childNodeList.item(i);
             switch (tagName) {
                 case "subjects":
-                    action.addSubject(subjectNode.getTextContent().trim());
+                    action.addSubject(node.getTextContent().trim());
                     break;
                 case "produced":
-                    action.addProduced(subjectNode.getTextContent().trim());
+                    action.addProduced(node.getTextContent().trim());
                     break;
                 case "consumed":
-                    action.addConsumed(subjectNode.getTextContent().trim());
+                    action.addConsumed(node.getTextContent().trim());
                     break;
                 case "triggers":
-                     action.addTrigger(subjectNode.getTextContent().trim());
+                     action.addTrigger(node.getTextContent().trim());
+                     actionHashMap.get(node.getTextContent().trim()).add(action);
                      break;
                 default:
                     throw new RuntimeException("Unknown tag name found in action file");
             }
         }
+    }
+
+    public Map<String, Set<GameAction>> getActionHashMap() {
+        return actionHashMap;
     }
 
     /**

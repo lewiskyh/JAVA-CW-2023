@@ -35,6 +35,18 @@ public class GameAction {
         this.narration = narration;
     }
 
+    public ArrayList<String> getProduced(){
+        return this.produced;
+    }
+    public ArrayList<String> getConsumed(){
+        return this.consumed;
+    }
+    public ArrayList<String> getSubjects(){
+        return this.subjects;
+    }
+    public ArrayList<String> getTriggers(){
+        return this.triggers;
+    }
 
 
 }
