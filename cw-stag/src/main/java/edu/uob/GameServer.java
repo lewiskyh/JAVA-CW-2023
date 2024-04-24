@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import com.alexmerz.graphviz.Parser;
@@ -58,10 +59,42 @@ public final class GameServer {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = builder.parse(actionsFile);
         Element root = document.getDocumentElement();
-        NodeList nodes = root.getChildNodes();
-        for(int i = 0; i <nodes.getLength(); i++){
+        NodeList actions = root.getElementsByTagName("action");
+        for(int i = 0; i <actions.getLength(); i++){
+            Element actionElement = (Element) actions.item(i);
+            GameAction action = new GameAction();
+            addActionDetailsByTag(actionElement, "subjects", "entity",action);
+            addActionDetailsByTag(actionElement, "produced", "entity", action);
+            addActionDetailsByTag(actionElement, "consumed", "entity", action);
+            addActionDetailsByTag(actionElement, "triggers", "keyphrase", action);
+            String narration = actionElement.getElementsByTagName("narration").item(0).getTextContent().trim();
+            action.addNarration(narration);
         }
 
+    }
+
+    public void addActionDetailsByTag (Element actionElement, String tagName, String childTag,GameAction action){
+        Element elemntChild = (Element) actionElement.getElementsByTagName(tagName).item(0);
+        NodeList childNodeList = elemntChild.getElementsByTagName(childTag);
+        for(int i = 0; i < childNodeList.getLength(); i++){
+            Element subjectNode = (Element) childNodeList.item(i);
+            switch (tagName) {
+                case "subjects":
+                    action.addSubject(subjectNode.getTextContent().trim());
+                    break;
+                case "produced":
+                    action.addProduced(subjectNode.getTextContent().trim());
+                    break;
+                case "consumed":
+                    action.addConsumed(subjectNode.getTextContent().trim());
+                    break;
+                case "triggers":
+                     action.addTrigger(subjectNode.getTextContent().trim());
+                     break;
+                default:
+                    throw new RuntimeException("Unknown tag name found in action file");
+            }
+        }
     }
 
     /**
