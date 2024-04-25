@@ -25,4 +25,12 @@ public class commandProcessorTest {
         assertEquals("LOOK at the POTION in the room", processor.commandProcessing());
     }
 
+    @Test
+    void testComplex1(){
+        commandProcessor processor= new commandProcessor("simon: LOOK at 123 !* POTION in the room.");
+        processor.commandProcessing();
+        assertEquals("simon", processor.getPlayerName());
+        assertEquals("LOOK at POTION in the room", processor.commandProcessing());
+    }
+
 }
