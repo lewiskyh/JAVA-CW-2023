@@ -26,7 +26,7 @@ public class GameModel {
     private HashMap<String, Location> gameLocations;
     private HashMap<String, Player> players;
 
-    public GameModel(File actionsFile, File entitiesFile) {
+    public GameModel(File entitiesFile,File actionsFile) {
         this.existingEntities = new ArrayList<>();
         this.gameLocations = new HashMap<>();
         this.players = new HashMap<>();

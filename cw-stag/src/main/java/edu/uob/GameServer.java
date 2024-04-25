@@ -42,7 +42,7 @@ public final class GameServer {
     * @param actionsFile The game configuration file containing all game actions to use in your game
     */
     public GameServer(File entitiesFile, File actionsFile) {
-        this.model = new GameModel(actionsFile,entitiesFile);
+        this.model = new GameModel(entitiesFile, actionsFile);
     }
 
     public GameModel getModel() { return this.model; }
