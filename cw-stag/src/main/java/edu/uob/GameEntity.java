@@ -6,6 +6,7 @@ import java.util.List;
 public abstract class GameEntity {
     private final String name;
     private final String description;
+    private String location;
 
     public GameEntity(String name, String description)
     {
@@ -18,10 +19,10 @@ public abstract class GameEntity {
         return name;
     }
 
-    public String getDescription()
-    {
-        return description;
-    }
+    public String getDescription()  { return description;}
+
+    public void setLocation (String location){ this.location = location;}
+    public String getLocation(){ return location;}
 
 
 

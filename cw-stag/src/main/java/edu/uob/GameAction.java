@@ -48,5 +48,7 @@ public class GameAction {
         return this.triggers;
     }
 
+    public String getNarration(){ return this.narration; }
+
 
 }

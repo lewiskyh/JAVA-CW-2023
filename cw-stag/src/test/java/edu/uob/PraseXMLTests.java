@@ -28,14 +28,14 @@ public class PraseXMLTests {
 
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
-        this.server = new GameServer(entitiesFile, actionsFile);
+        this.server = new GameServer(actionsFile,entitiesFile);
     }
 
 
     //Assert triggers are loaded to the action hashmap as Key
     @Test
     void testReadActionFile() {
-        Map<String, Set<GameAction>> actions = server.getActionHashMap();
+        Map<String, Set<GameAction>> actions = server.getModel().getActionHashMap();
         assertEquals(9, actions.size());
         assertTrue(actions.containsKey("open"));
         assertTrue(actions.containsKey("unlock"));
@@ -51,7 +51,7 @@ public class PraseXMLTests {
     //Assert the content of the action hashmap
     @Test
     void testActionHashMapContent() {
-        Map<String, Set<GameAction>> actions = server.getActionHashMap();
+        Map<String, Set<GameAction>> actions = server.getModel().getActionHashMap();
         assertEquals(1, actions.get("open").size());
         assertEquals(1, actions.get("unlock").size());
         assertEquals(1, actions.get("chop").size());
@@ -65,6 +65,7 @@ public class PraseXMLTests {
             assertTrue(action.getTriggers().contains("open"));
             assertTrue(action.getTriggers().contains("unlock"));
             assertEquals(2, action.getTriggers().size());
+            assertEquals("You unlock the trapdoor and see steps leading down into a cellar", action.getNarration());
         }
         for (GameAction action : actions.get("unlock")) {
             assertTrue(action.getSubjects().contains("key"));
