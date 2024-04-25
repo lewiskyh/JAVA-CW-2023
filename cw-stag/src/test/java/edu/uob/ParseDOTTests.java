@@ -25,7 +25,7 @@ final class ParseDOTTests {
     void parseBasicDotFile(){
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
-        server = new GameServer(actionsFile,entitiesFile);
+        server = new GameServer(entitiesFile,actionsFile);
         //Assert locations are loaded
         assertEquals("cabin", server.getModel().getLocation("cabin").getName());
         assertEquals("forest", server.getModel().getLocation("forest").getName());
@@ -46,7 +46,7 @@ final class ParseDOTTests {
     void parseExtendedDotFile(){
         File entitiesFile = Paths.get("config" + File.separator + "extended-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
-        server = new GameServer(actionsFile, entitiesFile);
+        server = new GameServer(entitiesFile, actionsFile);
 
         //Assert entities of location are loaded
         assertEquals("storeroom", server.getModel().getLocation("storeroom").getName());
@@ -57,7 +57,7 @@ final class ParseDOTTests {
     void parsePathsofDotFile(){
         File entitiesFile = Paths.get("config" + File.separator + "extended-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
-        server = new GameServer(actionsFile, entitiesFile);
+        server = new GameServer(entitiesFile, actionsFile);
         //Assert paths are loaded
         assertEquals("forest", server.getModel().getLocation("cabin").getPath("forest").getName());
         assertEquals("cabin", server.getModel().getLocation("forest").getPath("cabin").getName());

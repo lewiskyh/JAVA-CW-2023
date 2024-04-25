@@ -28,7 +28,7 @@ public class PraseXMLTests {
 
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
         File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
-        this.server = new GameServer(actionsFile,entitiesFile);
+        this.server = new GameServer(entitiesFile,actionsFile);
     }
 
 
