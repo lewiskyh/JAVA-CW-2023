@@ -182,7 +182,7 @@ public class GameModel {
             NodeList triggerNodeList = triggersElement.getElementsByTagName("keyphrase");
             for(int j = 0; j < triggerNodeList.getLength(); j++){
                 Element triggerNode = (Element) triggerNodeList.item(j);
-                triggers.add(triggerNode.getTextContent().trim());
+                triggers.add(triggerNode.getTextContent().toLowerCase().trim());
             }
         }
     }
@@ -195,17 +195,17 @@ public class GameModel {
             Element node = (Element) childNodeList.item(i);
             switch (tagName) {
                 case "subjects":
-                    action.addSubject(node.getTextContent().trim());
+                    action.addSubject(node.getTextContent().toLowerCase().trim());
                     break;
                 case "produced":
-                    action.addProduced(node.getTextContent().trim());
+                    action.addProduced(node.getTextContent().toLowerCase().trim());
                     break;
                 case "consumed":
-                    action.addConsumed(node.getTextContent().trim());
+                    action.addConsumed(node.getTextContent().toLowerCase().trim());
                     break;
                 case "triggers":
-                    action.addTrigger(node.getTextContent().trim());
-                    actionHashMap.get(node.getTextContent().trim()).add(action);
+                    action.addTrigger(node.getTextContent().toLowerCase().trim());
+                    actionHashMap.get(node.getTextContent().toLowerCase().trim()).add(action);
                     break;
                 default:
                     throw new RuntimeException("Unknown tag name found in action file");
@@ -224,4 +224,6 @@ public class GameModel {
     public Player getPlayer (String playerName){
         return this.players.get(playerName);
     }
+
+    public void addPlayer (String playerName){ this.players.put(playerName, new Player(playerName)); }
 }

@@ -58,5 +58,35 @@ public class Location extends GameEntity{
     public String getName(){ return super.getName(); }
     public String getDescription(){ return super.getDescription(); }
 
+    public void getLookDescription(){
+        ArrayList<String> lookDescription = new ArrayList<String>();
+        lookDescription.add(super.getName());
+        lookDescription.add(super.getDescription());
+        lookDescription.add("Characters: ");
+        for (Character character : characterList){
+            lookDescription.add(character.getName());
+            lookDescription.add(character.getDescription());
+        }
+        lookDescription.add("Artefacts: ");
+        for (Artefact artefact : artefactList){
+            lookDescription.add(artefact.getName());
+            lookDescription.add(artefact.getDescription());
+        }
+        lookDescription.add("Furniture: ");
+        for (Furniture furniture : furnitureList){
+            lookDescription.add(furniture.getName());
+            lookDescription.add(furniture.getDescription());
+        }
+        lookDescription.add("Paths: ");
+        for (Location path : pathList){
+            lookDescription.add(path.getName());
+        }
+        for (String description : lookDescription){
+            System.out.println(description);
+        }
+
+    }
+
+
 
 }

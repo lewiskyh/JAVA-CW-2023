@@ -11,5 +11,12 @@ public class Player extends Character{
         super(name, "Player: " + name);
     }
 
+    public void setCurrentLocation(Location location){
+        this.currentLocation = location;
+    }
+    public Location getCurrentLocation(){
+        return this.currentLocation;
+    }
+
 
 }

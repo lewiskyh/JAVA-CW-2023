@@ -6,8 +6,6 @@ import java.util.Set;
 public class commandProcessor {
     private String fullCommand;
 
-    private Set<String> actionTriggers;
-
     private String playerName;
 
     public commandProcessor(String fullCommand){
