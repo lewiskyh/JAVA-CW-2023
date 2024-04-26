@@ -1,5 +1,8 @@
 package edu.uob;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 public class GameControl {
@@ -19,6 +22,7 @@ public class GameControl {
      * set the actual command after :
      * set the current player name
      * @param fullCommand the full command string e.g. simon: look
+     * @return StringTrigger the trigger of the command e.g. look
      *
      */
     public String preprocessCommand(String fullCommand) {
@@ -31,8 +35,17 @@ public class GameControl {
         }
         //check if the command is a basic command or a tailored command
         //The trigger returned must be a valid trigger
-        return checkActionTrigger(this.actualCommandString);
+        ArrayList<String> actionTrigger = checkActionTrigger(this.actualCommandString);
+        if (actionTrigger.size() != 1) {
+            for (String trigger : actionTrigger){
+
+            }
+        }
+        //How to postprocess triggers???
+        return actionTrigger.get(0);
     }
+
+
 
     public void executeCommand(){
         this.command.execute();
@@ -63,27 +76,75 @@ public class GameControl {
         }
     }
 
-    public String checkActionTrigger (String actualCommand){
+    public ArrayList<String> checkActionTrigger (String actualCommand){
         int triggerCount = 0;
-        String actionTrigger = "";
-        for (String command : this.basicCommands){
-            if(actualCommand.contains(command)){
-                triggerCount++;
-                actionTrigger = command;
+        ArrayList<String> actionTrigger = new ArrayList<>();
+
+        //Combine both basic and tailored triggers
+        List<String> allTriggers = new ArrayList<>();
+
+        allTriggers.addAll(this.tailoredCommandTrigger);
+        allTriggers.addAll(List.of(this.basicCommands));
+        allTriggers.sort(Comparator.comparingInt(String::length).reversed());
+
+        for (String trigger : allTriggers){
+            if(trigger.split(" ").length > 1) {
+                String phrasalVerb = phrasalVerbHandler(actualCommand, trigger);
+                if (phrasalVerb != null) {
+                    triggerCount++;
+                    actionTrigger.add(phrasalVerb);
+                    System.out.println("Phrasal Verb: " + actionTrigger);
+                }
             }
-        }
-        for (String command : this.tailoredCommandTrigger){
-            if(actualCommand.contains(command)){
-                triggerCount++;
-                actionTrigger = command;
+            else{
+                if(actualCommand.contains(trigger)) {
+                    triggerCount++;
+                    actionTrigger.add(trigger);
+                    System.out.println("Singleword Verb: " + actionTrigger);
+
+                }
             }
-        }
-        if(triggerCount != 1){
-            throw new RuntimeException("Invalid command, please enter only one action trigger");
         }
         return actionTrigger;
 
     }
+
+    //THink!
+
+    private ArrayList<String> filterTrigger (ArrayList<String> actionTrigger){
+        actionTrigger.sort(Comparator.comparingInt(String::length).reversed());
+        ArrayList<String> filteredTrigger = new ArrayList<>();
+        for (String trigger : actionTrigger){
+            if (trigger.split(" ").length > 1){
+                filteredTrigger.add(trigger);
+            }
+        }
+        return filteredTrigger;
+    }
+
+    private String phrasalVerbHandler (String actualCommand, String trigger){
+        String [] commandFragments = actualCommand.split(" ");
+        String [] triggerFragments = trigger.split(" ");
+        int triggerLength = triggerFragments.length;
+        String [] triggerKey = new String[triggerLength];
+        for (int i = 0; i<=commandFragments.length-triggerLength; i++){
+            boolean match = true;
+            for (int j = 0; j<triggerLength; j++){
+                if(!commandFragments[j+i].equalsIgnoreCase(triggerFragments[j])){
+                    match = false;
+                    break;
+                }
+            }
+            System.out.println("Trigger: " + trigger);
+            if (match){ return trigger;}
+        }
+
+        return null;
+    }
+
+    public String getCurrentPlayer(){ return this.currentPlayer; }
+
+    public GameModel getModel() { return this.model; }
 
 
 
