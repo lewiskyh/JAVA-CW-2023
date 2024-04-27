@@ -82,7 +82,7 @@ public class GameControl {
                 this.command = new InventoryCommand(this.model, this.currentPlayer, this.actualCommandString);
                 break;
             default:
-                //this.command = new TailoredCommand(this.model, this.currentPlayer, trigger, this.actualCommandString);
+                this.command = new TailoredCommand(this.model, this.currentPlayer, this.actualCommandString, trigger);
                 break;
         }
     }

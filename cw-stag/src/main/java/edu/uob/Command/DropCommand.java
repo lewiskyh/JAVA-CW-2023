@@ -29,14 +29,15 @@ public class DropCommand extends GameCommand{
                         throw new RuntimeException("You can only drop ONE item each time.");
                     }
                     artefactToDrop = artefactList.get(i);
-                    player.removeItem(artefactToDrop);
-                    artefactName = artefactToDrop.getName();
                 }
             }
         }
         if (itemMatch == 0){
             throw new RuntimeException("No such item in your inventory.");
         }
+        player.removeItem(artefactToDrop);
+        artefactName = artefactToDrop.getName();
+
         //Add the artefact to the location
         currentLocation.addArtefact(artefactToDrop);
         return "You have dropped the item: " + artefactName;

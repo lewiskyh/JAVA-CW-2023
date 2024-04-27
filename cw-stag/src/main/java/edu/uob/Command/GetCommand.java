@@ -18,6 +18,7 @@ public class GetCommand extends GameCommand{
         List<Artefact> artefactList = currentLocation.getArtefactList();
         int itemMatch = 0;
         String artefactName = "";
+        Artefact artefactToGet = null;
 
         for (String fragment : commandFragments){
             for (Artefact artefact : artefactList){
@@ -26,18 +27,20 @@ public class GetCommand extends GameCommand{
                     if(itemMatch > 1){
                         throw new RuntimeException("You can only pick up one item each time. Please specify the item.");
                     }
-                    player.addItem(artefact);
-                    artefactName = artefact.getName();
+                    artefactToGet = artefact;
+                    artefactName = artefactToGet.getName();
                 }
             }
         }
         if (itemMatch == 0){
             throw new RuntimeException("No such item. Please check again.");
         }
+        //Add the artefact to the player's inventory
+        player.addItem(artefactToGet);
         //Remove the artefact from the location
         currentLocation.removeArtefact(artefactName);
         return "You have picked up the item: " + artefactName;
-
     }
+    //Throw error if more than one target is provided
 }
 

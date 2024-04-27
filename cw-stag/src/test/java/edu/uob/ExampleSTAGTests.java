@@ -94,9 +94,15 @@ class ExampleSTAGTests {
 
     @Test
 
-    void testDrop(){
-      sendCommandToServer("simon: get potion");
+    void testComplexGetDrop(){
+      //Can only get one item
+      assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: get potion and axe"));
       String response = sendCommandToServer("simon: inv");
+      response = response.toLowerCase();
+      assertFalse(response.contains("potion"), "Invalid get command, potion should not be in the inventory");
+      assertFalse(response.contains("axe"), "Invalid get command, axe should not be in the inventory");
+      sendCommandToServer("simon: get potion");
+      response = sendCommandToServer("simon: inv");
       response = response.toLowerCase();
       assertTrue(response.contains("potion"), "Did not see the potion in the inventory after an attempt was made to get it");
       sendCommandToServer("simon: drop potion");
@@ -106,6 +112,22 @@ class ExampleSTAGTests {
       response = sendCommandToServer("simon: look");
       response = response.toLowerCase();
       assertTrue(response.contains("magic potion"), "Did not see a description of artifacts in response to look");
+    }
+
+    @Test
+
+    void testComplexGetDrop2(){
+        sendCommandToServer("simon: get axe");
+        sendCommandToServer("simon: get potion");
+        assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: drop axe and potion"));
+        String response = sendCommandToServer("simon: inv");
+        response = response.toLowerCase();
+        assertTrue(response.contains("potion"), "Potion should be in the inventory after the invalid drop command");
+        assertTrue(response.contains("axe"), "Axe should be in the inventory after the invalid drop command");
+        sendCommandToServer("simon: drop axe");
+        response = sendCommandToServer("simon: inv");
+        response = response.toLowerCase();
+        assertFalse(response.contains("axe"), "Axe should not be in the inventory after the drop command");
     }
 
 
