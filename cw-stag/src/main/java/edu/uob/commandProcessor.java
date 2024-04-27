@@ -18,7 +18,7 @@ public class commandProcessor {
      * remove any symbols from the command
      * @return the command part of the full command
      */
-    public String commandProcessing() {
+    public String commandCleaning() {
         String[] commandFragment = this.fullCommand.split(":", 2);
         this.playerName = commandFragment[0].trim();
         String [] actualCommand = commandFragment[1].split(" ");

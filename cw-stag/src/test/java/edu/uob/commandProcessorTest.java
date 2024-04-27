@@ -14,23 +14,23 @@ public class commandProcessorTest {
     void testSimple(){
         // Create a new Tokeniser object before every test
         commandProcessor processor= new commandProcessor("simon: look");
-        processor.commandProcessing();
+        processor.commandCleaning();
         assertEquals("simon", processor.getPlayerName());
-        assertEquals("look", processor.commandProcessing());
+        assertEquals("look", processor.commandCleaning());
     }
 
     @Test
     void testComplex() {
         commandProcessor processor= new commandProcessor("simon: LOOK at the POTION in the room");
-        assertEquals("LOOK at the POTION in the room", processor.commandProcessing());
+        assertEquals("LOOK at the POTION in the room", processor.commandCleaning());
     }
 
     @Test
     void testComplex1(){
         commandProcessor processor= new commandProcessor("simon: LOOK at 123 !* POTION in the room.");
-        processor.commandProcessing();
+        processor.commandCleaning();
         assertEquals("simon", processor.getPlayerName());
-        assertEquals("LOOK at POTION in the room", processor.commandProcessing());
+        assertEquals("LOOK at POTION in the room", processor.commandCleaning());
     }
 
 }

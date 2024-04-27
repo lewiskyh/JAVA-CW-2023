@@ -66,4 +66,16 @@ class ExampleSTAGTests {
 
   // Add more unit tests or integration tests here.
 
+    @Test
+    void testLook2() {
+        String response = sendCommandToServer("simon: look");
+        response = response.toLowerCase();
+        assertTrue(response.contains("cabin"), "Did not see the name of the current room in response to look");
+        assertTrue(response.contains("log cabin"), "Did not see a description of the room in response to look");
+        assertTrue(response.contains("magic potion"), "Did not see a description of artifacts in response to look");
+        assertTrue(response.contains("wooden trapdoor"), "Did not see description of furniture in response to look");
+        assertTrue(response.contains("forest"), "Did not see available paths in response to look");
+
+    }
+
 }

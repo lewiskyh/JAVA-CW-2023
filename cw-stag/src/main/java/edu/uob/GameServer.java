@@ -4,22 +4,8 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
-import java.util.*;
 
-import com.alexmerz.graphviz.Parser;
-import com.alexmerz.graphviz.ParseException;
-import com.alexmerz.graphviz.objects.Graph;
-import com.alexmerz.graphviz.objects.Node;
-import com.alexmerz.graphviz.objects.Edge;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import edu.uob.Command.GameCommand;
 
 
 public final class GameServer {
@@ -61,9 +47,11 @@ public final class GameServer {
     */
     public String handleCommand(String command) {
         // TODO implement your server logic here
-        Command gameCommand;
-        return "";
-
+        GameCommand gameCommand;
+        String trigger = this.control.preprocessCommand(command);
+        this.control.processCommand(trigger);
+        gameCommand = this.control.getCommand();
+        return gameCommand.execute();
     }
 
     /**

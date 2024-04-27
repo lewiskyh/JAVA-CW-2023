@@ -2,7 +2,7 @@ package edu.uob;
 
 import java.util.ArrayList;
 
-public class Player extends Character{
+public class Player extends GameCharacter{
 
     private int health;
     private Location currentLocation;

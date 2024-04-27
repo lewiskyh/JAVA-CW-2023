@@ -110,7 +110,7 @@ public class GameModel {
                     for (Node character : nodeofEntity) {
                         String name = character.getId().getId();
                         String description = character.getAttribute("description");
-                        Character characterObject = new Character(name, description);
+                        GameCharacter characterObject = new GameCharacter(name, description);
                         this.existingEntities.add(name);
                         location.addCharacter(characterObject);
                     }

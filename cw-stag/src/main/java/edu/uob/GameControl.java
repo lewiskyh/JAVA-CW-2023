@@ -1,5 +1,7 @@
 package edu.uob;
 
+import edu.uob.Command.*;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -10,7 +12,8 @@ public class GameControl {
     private commandProcessor processor;
     private String currentPlayer;
     private String actualCommandString;
-    private Command command;
+
+    private GameCommand command;
     private String[] basicCommands = {"look", "goto", "get", "drop", "inventory", "inv"};
     private Set<String> tailoredCommandTrigger;
 
@@ -27,7 +30,7 @@ public class GameControl {
      */
     public String preprocessCommand(String fullCommand) {
         this.processor = new commandProcessor(fullCommand);
-        this.actualCommandString = this.processor.commandProcessing().toLowerCase();
+        this.actualCommandString = this.processor.commandCleaning().toLowerCase();
         this.currentPlayer = this.processor.getPlayerName();
         //Ensure only 1 trigger is used in the command
         checkTriggerNumber(this.actualCommandString, this.tailoredCommandTrigger, this.basicCommands);
@@ -40,7 +43,6 @@ public class GameControl {
         //check if the command is a basic command or a tailored command
         //The trigger returned must be a valid trigger
         return getActionTrigger(this.actualCommandString);
-        //Create Command object based on the trigger
     }
 
     private void checkTriggerNumber(String actualCommandString, Set<String> tailoredCommandTrigger, String[] basicCommands){
@@ -61,36 +63,33 @@ public class GameControl {
             throw new RuntimeException("You should use ONE trigger in the command");
         }
     }
-    public void executeCommand(){
-        this.command.execute();
-    }
 
-    /*
-    public Command processCommand(String trigger){
+    public void processCommand(String trigger){
         switch(trigger){
             case "look":
-                //this.command = new LookCommand(this.model, this.currentPlayer, this.actualCommandString);
+                this.command = new LookCommand(this.model, this.currentPlayer, this.actualCommandString);
                 break;
             case "goto":
-                //this.command = new GotoCommand(this.model, this.currentPlayer, this.actualCommandString);
+                this.command = new GotoCommand(this.model, this.currentPlayer, this.actualCommandString);
                 break;
             case "get":
-                //this.command = new GetCommand(this.model, this.currentPlayer, this.actualCommandString);
+                this.command = new GetCommand(this.model, this.currentPlayer, this.actualCommandString);
                 break;
             case "drop":
-                //this.command = new DropCommand(this.model, this.currentPlayer, this.actualCommandString);
+                this.command = new DropCommand(this.model, this.currentPlayer, this.actualCommandString);
                 break;
-            case "inventory":
-                //this.command = new InventoryCommand(this.model, this.currentPlayer, this.actualCommandString);
-                break;
-            case "inv":
-                //this.command = new InventoryCommand(this.model, this.currentPlayer, this.actualCommandString);
+            case "inventory", "inv":
+                this.command = new InventoryCommand(this.model, this.currentPlayer, this.actualCommandString);
                 break;
             default:
                 //this.command = new TailoredCommand(this.model, this.currentPlayer, trigger, this.actualCommandString);
                 break;
         }
-    }*/
+    }
+
+    public GameCommand getCommand(){
+        return this.command;
+    }
 
     private String getActionTrigger (String actualCommand) {
 
