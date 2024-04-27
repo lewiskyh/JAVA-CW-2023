@@ -90,7 +90,23 @@ class ExampleSTAGTests {
       response = sendCommandToServer("simon: look");
       response = response.toLowerCase();
       assertTrue(response.contains("magic potion"), "Failed attempt to use 'goto' command to move to the forest - there is no key in the current location");
-
     }
+
+    @Test
+
+    void testDrop(){
+      sendCommandToServer("simon: get potion");
+      String response = sendCommandToServer("simon: inv");
+      response = response.toLowerCase();
+      assertTrue(response.contains("potion"), "Did not see the potion in the inventory after an attempt was made to get it");
+      sendCommandToServer("simon: drop potion");
+      response = sendCommandToServer("simon: inv");
+      response = response.toLowerCase();
+      assertFalse(response.contains("potion"), "Potion is still present in the room after an attempt was made to get it");
+      response = sendCommandToServer("simon: look");
+      response = response.toLowerCase();
+      assertTrue(response.contains("magic potion"), "Did not see a description of artifacts in response to look");
+    }
+
 
 }

@@ -26,5 +26,9 @@ public class Player extends GameCharacter{
         return items;
     }
 
+    public void removeItem(Artefact artefact){
+        items.remove(artefact);
+    }
+
 
 }
