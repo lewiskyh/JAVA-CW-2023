@@ -8,6 +8,7 @@ public class LookCommand extends GameCommand {
         super(model, playerName, command);
     }
 
+    @Override
     public String execute(){
         String currentLocationName = player.getCurrentLocation().getName();
         Location currentLocation = model.getLocation(currentLocationName);

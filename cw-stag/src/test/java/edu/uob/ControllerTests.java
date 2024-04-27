@@ -17,7 +17,7 @@ public class ControllerTests {
 
     public void setup() {
         File entitiesFile = Paths.get("config" + File.separator + "basic-entities.dot").toAbsolutePath().toFile();
-        File actionsFile = Paths.get("config" + File.separator + "basic-actions.xml").toAbsolutePath().toFile();
+        File actionsFile = Paths.get("config" + File.separator + "extended-actions.xml").toAbsolutePath().toFile();
         model = new GameModel (entitiesFile, actionsFile);
         control = new GameControl(model);
     }
@@ -32,9 +32,9 @@ public class ControllerTests {
         assertEquals("lewis", this.control.getModel().getPlayer("lewis").getName());
         assertEquals("get", this.control.preprocessCommand("simon: get key"));
         assertEquals("cut", this.control.preprocessCommand("simon: cut tree"));
-        assertEquals("cutdown", this.control.preprocessCommand("simon: cutdown the tree"));
+        assertEquals("cut down", this.control.preprocessCommand("simon: cut down the tree"));
         //Assert error when no. of trigger used is not 1
-        assertThrows(RuntimeException.class, () -> this.control.preprocessCommand("simon: cutdown goto"));
+        assertThrows(RuntimeException.class, () -> this.control.preprocessCommand("simon: cut down goto"));
         assertThrows(RuntimeException.class, () -> this.control.preprocessCommand("simon: key!"));
         assertThrows(RuntimeException.class, () -> this.control.preprocessCommand("simon: cut and goto cellar"));
 

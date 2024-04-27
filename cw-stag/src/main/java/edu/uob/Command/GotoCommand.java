@@ -11,6 +11,7 @@ public class GotoCommand extends GameCommand {
         super(model, playerName, command);
     }
 
+    @Override
     public String execute() {
         String currentLocationName = player.getCurrentLocation().getName();
         Location currentLocation = model.getLocation(currentLocationName);
@@ -32,7 +33,7 @@ public class GotoCommand extends GameCommand {
         if (pathMatch == 0){ throw new RuntimeException("No available path. Please check again."); }
         this.player.setCurrentLocation(model.getLocation(pathName));
 
-        return "You have arrived at new location " + pathName + "\n" + "Location : " + model.getLocation(pathName).getDescription();
+        return "You have arrived at new location " + pathName;
     }
 
 }

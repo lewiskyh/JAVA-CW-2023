@@ -63,6 +63,15 @@ public class Location extends GameEntity{
     public List<Furniture> getFurnitureList(){ return furnitureList; }
     public List<Location> getPathList(){ return pathList; }
 
+    public void removeArtefact(String artefactName){
+        for (Artefact artefact : this.artefactList){
+            if(artefact.getName().equalsIgnoreCase(artefactName)){
+                artefactList.remove(artefact);
+                break;
+            }
+        }
+    }
+
 
 
 

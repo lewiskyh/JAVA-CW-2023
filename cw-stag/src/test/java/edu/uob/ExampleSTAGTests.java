@@ -1,14 +1,13 @@
 package edu.uob;
 
-import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.nio.file.Paths;
 import java.io.IOException;
 import java.time.Duration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ExampleSTAGTests {
 
@@ -75,6 +74,22 @@ class ExampleSTAGTests {
         assertTrue(response.contains("magic potion"), "Did not see a description of artifacts in response to look");
         assertTrue(response.contains("wooden trapdoor"), "Did not see description of furniture in response to look");
         assertTrue(response.contains("forest"), "Did not see available paths in response to look");
+
+    }
+
+    @Test
+    void testbadGoto(){
+      //No path from cabin to cellar
+      assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: goto cellar"));
+      sendCommandToServer("simon: goto forest");
+      String response = sendCommandToServer("simon: look");
+      response = response.toLowerCase();
+      assertTrue(response.contains("a dark forest"), "Failed attempt to use 'goto' command to move to the forest - there is no key in the current location");
+      assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: goto cellar"));
+      sendCommandToServer("simon: goto cabin");
+      response = sendCommandToServer("simon: look");
+      response = response.toLowerCase();
+      assertTrue(response.contains("magic potion"), "Failed attempt to use 'goto' command to move to the forest - there is no key in the current location");
 
     }
 
