@@ -9,4 +9,5 @@ public class LookCommand extends Command{
     public void execute(){
         this.player.getCurrentLocation().getLookDescription();
     }
+    //Player's current location. Print the entities in the location.But how to set location of player? The starting location?
 }

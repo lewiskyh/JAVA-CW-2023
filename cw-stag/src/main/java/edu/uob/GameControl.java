@@ -29,24 +29,34 @@ public class GameControl {
         this.processor = new commandProcessor(fullCommand);
         this.actualCommandString = this.processor.commandProcessing().toLowerCase();
         this.currentPlayer = this.processor.getPlayerName();
+        checkTriggerNumber(this.actualCommandString, this.tailoredCommandTrigger, this.basicCommands);
         //Add player to gameModel if not exists already
         if (this.model.getPlayer(this.currentPlayer) == null) {
             this.model.addPlayer(this.currentPlayer);
         }
         //check if the command is a basic command or a tailored command
         //The trigger returned must be a valid trigger
-        ArrayList<String> actionTrigger = checkActionTrigger(this.actualCommandString);
-        if (actionTrigger.size() != 1) {
-            for (String trigger : actionTrigger){
-
-            }
-        }
-        //How to postprocess triggers???
-        return actionTrigger.get(0);
+        return getActionTrigger(this.actualCommandString);
     }
 
-
-
+    private void checkTriggerNumber(String actualCommandString, Set<String> tailoredCommandTrigger, String[] basicCommands){
+        String [] commandFragments = actualCommandString.split(" ");
+        List<String> allTriggers = new ArrayList<>();
+        allTriggers.addAll(tailoredCommandTrigger);
+        allTriggers.addAll(List.of(basicCommands));
+        int triggerCount = 0;
+        //Count the number of triggers in the command fragments
+        for (int i = 0; i < commandFragments.length; i++){
+            for (String trigger : allTriggers) {
+                if (commandFragments[i].equalsIgnoreCase(trigger)) {
+                    triggerCount++;
+                }
+            }
+        }
+        if (triggerCount != 1){
+            throw new RuntimeException("You should use ONE trigger in the command");
+        }
+    }
     public void executeCommand(){
         this.command.execute();
     }
@@ -76,9 +86,7 @@ public class GameControl {
         }
     }
 
-    public ArrayList<String> checkActionTrigger (String actualCommand){
-        int triggerCount = 0;
-        ArrayList<String> actionTrigger = new ArrayList<>();
+    private String getActionTrigger (String actualCommand) {
 
         //Combine both basic and tailored triggers
         List<String> allTriggers = new ArrayList<>();
@@ -87,40 +95,22 @@ public class GameControl {
         allTriggers.addAll(List.of(this.basicCommands));
         allTriggers.sort(Comparator.comparingInt(String::length).reversed());
 
-        for (String trigger : allTriggers){
-            if(trigger.split(" ").length > 1) {
+        for (String trigger : allTriggers) {
+            if (trigger.split(" ").length > 1) {
                 String phrasalVerb = phrasalVerbHandler(actualCommand, trigger);
                 if (phrasalVerb != null) {
-                    triggerCount++;
-                    actionTrigger.add(phrasalVerb);
-                    System.out.println("Phrasal Verb: " + actionTrigger);
+                    return phrasalVerb;
                 }
-            }
-            else{
-                if(actualCommand.contains(trigger)) {
-                    triggerCount++;
-                    actionTrigger.add(trigger);
-                    System.out.println("Singleword Verb: " + actionTrigger);
+            } else {
+                if (actualCommand.contains(trigger)) {
+                    return trigger;
 
                 }
             }
         }
-        return actionTrigger;
-
+        return null;
     }
 
-    //THink!
-
-    private ArrayList<String> filterTrigger (ArrayList<String> actionTrigger){
-        actionTrigger.sort(Comparator.comparingInt(String::length).reversed());
-        ArrayList<String> filteredTrigger = new ArrayList<>();
-        for (String trigger : actionTrigger){
-            if (trigger.split(" ").length > 1){
-                filteredTrigger.add(trigger);
-            }
-        }
-        return filteredTrigger;
-    }
 
     private String phrasalVerbHandler (String actualCommand, String trigger){
         String [] commandFragments = actualCommand.split(" ");
@@ -135,7 +125,6 @@ public class GameControl {
                     break;
                 }
             }
-            System.out.println("Trigger: " + trigger);
             if (match){ return trigger;}
         }
 
