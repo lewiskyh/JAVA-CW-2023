@@ -29,14 +29,18 @@ public class GameControl {
         this.processor = new commandProcessor(fullCommand);
         this.actualCommandString = this.processor.commandProcessing().toLowerCase();
         this.currentPlayer = this.processor.getPlayerName();
+        //Ensure only 1 trigger is used in the command
         checkTriggerNumber(this.actualCommandString, this.tailoredCommandTrigger, this.basicCommands);
         //Add player to gameModel if not exists already
         if (this.model.getPlayer(this.currentPlayer) == null) {
             this.model.addPlayer(this.currentPlayer);
+            //Set the player's starting location
+            this.model.getPlayer(this.currentPlayer).setCurrentLocation(this.model.getStartingLocation());
         }
         //check if the command is a basic command or a tailored command
         //The trigger returned must be a valid trigger
         return getActionTrigger(this.actualCommandString);
+        //Create Command object based on the trigger
     }
 
     private void checkTriggerNumber(String actualCommandString, Set<String> tailoredCommandTrigger, String[] basicCommands){
@@ -61,10 +65,12 @@ public class GameControl {
         this.command.execute();
     }
 
-    public void processCommand(String trigger){
+    /*
+    public Command processCommand(String trigger){
         switch(trigger){
             case "look":
-                this.command = new LookCommand(this.model, this.currentPlayer, this.actualCommandString);
+                //this.command = new LookCommand(this.model, this.currentPlayer, this.actualCommandString);
+                break;
             case "goto":
                 //this.command = new GotoCommand(this.model, this.currentPlayer, this.actualCommandString);
                 break;
@@ -84,7 +90,7 @@ public class GameControl {
                 //this.command = new TailoredCommand(this.model, this.currentPlayer, trigger, this.actualCommandString);
                 break;
         }
-    }
+    }*/
 
     private String getActionTrigger (String actualCommand) {
 

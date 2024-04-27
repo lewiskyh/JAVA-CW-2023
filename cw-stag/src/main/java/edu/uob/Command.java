@@ -11,8 +11,10 @@ public class Command {
         this.command = command;
     }
 
-    public void execute(){
+    public String execute(){
         //to be overriden by the child classes
+
+        return "";
     }
 
 }
