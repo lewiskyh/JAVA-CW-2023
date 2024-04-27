@@ -2,9 +2,7 @@ package edu.uob.Command;
 
 import edu.uob.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class TailoredCommand extends GameCommand{
 
@@ -31,7 +29,7 @@ public class TailoredCommand extends GameCommand{
         GameAction actionToExecute = null;
         Set<GameAction> possibleActions = this.model.getActionHashMap().get(this.trigger);
         for (GameAction action: possibleActions){
-            if (isEnoughSubjectProvided(action, commandFragments)){
+            if (isAtLeastOneSubjectProvided(action, commandFragments)){
                 actionMatched++;
                 if (actionMatched > 1){
                     throw new RuntimeException("More than one possible action identified. Please specify subjects.");
@@ -42,11 +40,18 @@ public class TailoredCommand extends GameCommand{
         //Based on the action, check if the subjects exist in the player's inventory or in the location
         // The subjects can be character, artefacts, furniture, location, health.
         if (actionMatched == 0){ throw new RuntimeException("Cannot identify action. Please specify subjects");}
+        if (!checkSubjectFullAvailability(actionToExecute, currentLocation)){
+            throw new RuntimeException("Subjects must be available in the location or in player's inventory.");
+        }
+        //Produce the entity.
+        executeProduce(actionToExecute);
+        //Consume the entity.
+        executeConsume(actionToExecute);
         return actionToExecute.getNarration();
     }
 
     //To check if at least one subject in the command matches the subjects in action details
-    private boolean isEnoughSubjectProvided (GameAction action, String[] commandFragments){
+    private boolean isAtLeastOneSubjectProvided (GameAction action, String[] commandFragments){
         ArrayList<String> subjects = action.getSubjects();
         for (String fragment : commandFragments) {
             for (String subject : subjects) {
@@ -57,44 +62,116 @@ public class TailoredCommand extends GameCommand{
         }
         return false;
     }
+    //Check if the subjects are present in the player's inventory or in the location
+    private boolean checkSubjectFullAvailability(GameAction action, Location currentLocation){
 
-    private boolean checkSubjectAvailability(GameAction action, Location currentLocation){
-        //Check if the subjects are present in the player's inventory or in the location
-        ArrayList<GameEntity> environmentSubjects = new ArrayList<>();
-        environmentSubjects.addAll(currentLocation.getArtefactList());
-        environmentSubjects.addAll(currentLocation.getCharacterList());
-        environmentSubjects.addAll(currentLocation.getFurnitureList());
-        ArrayList<Artefact> playerInventory = player.getItemList();
-        ArrayList<String> subjectsToCheck = action.getSubjects();
-        int subjectCount = subjectsToCheck.size();
-
-        for (String subject : subjectsToCheck){
-            for (GameEntity entity : environmentSubjects){
-                if(subject.equalsIgnoreCase(entity.getName())){
-                    subjectCount--;
-                }
-            }
-            for(Artefact artefact : playerInventory){
-                if(subject.equalsIgnoreCase(artefact.getName())){
-                    subjectCount--;
-                }
-            }
-            if(subjectCount == 0){ return true; }
+        Set<String> environmentSubjects = new HashSet<>();
+        for (GameEntity entity : currentLocation.getCharacterList()){
+            environmentSubjects.add(entity.getName().toLowerCase());
         }
-        return false;
+        for (GameEntity entity : currentLocation.getFurnitureList()){
+            environmentSubjects.add(entity.getName().toLowerCase());
+        }
+        for (GameEntity entity : player.getItemList()){
+            environmentSubjects.add(entity.getName().toLowerCase());
+        }
+
+        for (String subject : action.getSubjects()){
+            if(!environmentSubjects.contains(subject.toLowerCase())){ return false; }
+        }
+        return true;
+    }
+    //Location(produced as path) vs Other Entities (moved from original location to current's location)
+    private void executeProduce(GameAction action){
+        //Check Entity is a location or not
+        for (String entity : action.getProduced()){
+            String entityLowerCase = entity.toLowerCase();
+            if (isEntityLocation(entityLowerCase)){
+                //Add location path to current location
+                Location newLocation = model.getGameLocations().get(entityLowerCase);
+                player.getCurrentLocation().addPath(newLocation);
+            }
+            else{
+                //Move entity from original location to current location
+                String currentLocationName = player.getCurrentLocation().getName();
+                Location currentLocation = model.getLocation(currentLocationName);
+                GameEntity entityToMove = extractEntityFromOriginalLocation(entityLowerCase);
+                moveEntityToGivenLocation(currentLocation, entityToMove);
+            }
+        }
     }
 
-    private void executeProduce(GameAction action){
-        //The entity type?
-        //Path?
-        //If it is health, add health to player
-        ArrayList<String> entitiestoProduce = action.getProduced();
+    private void moveEntityToGivenLocation(Location newLocation, GameEntity entity){
+        if (entity instanceof GameCharacter){
+            newLocation.addCharacter((GameCharacter) entity);
+        }
+        else if (entity instanceof Artefact){
+            newLocation.addArtefact((Artefact) entity);
+        }
+        else if (entity instanceof Furniture) {
+            newLocation.addFurniture((Furniture) entity);
+        }
+        else{
+            throw new RuntimeException("Null entity found");
+        }
+    }
+
+    private GameEntity extractEntityFromOriginalLocation(String entity){
+        for (Location location : model.getGameLocations().values()){
+            GameEntity entityFound = findAndRemoveEntity(location, entity);
+            if (entityFound != null){
+                return entityFound;
+            }
+        }
+        return null;
+    }
+
+
+    private GameEntity findAndRemoveEntity (Location location, String targetEntity){
+        for (GameEntity character : location.getCharacterList()){
+            if (character.getName().equalsIgnoreCase(targetEntity)){
+                location.removeCharacter(targetEntity);
+                return character;
+            }
+        }
+        for (GameEntity artefact : location.getArtefactList()){
+            if (artefact.getName().equalsIgnoreCase(targetEntity)){
+                location.removeArtefact(targetEntity);
+                return artefact;
+            }
+        }
+        for (GameEntity furniture : location.getFurnitureList()){
+            if (furniture.getName().equalsIgnoreCase(targetEntity)){
+                location.removeFurniture(targetEntity);
+                return furniture;
+            }
+        }
+        return null;
+    }
+
+
+
+    private boolean isEntityLocation(String entity){
+        HashMap<String, Location> locationMap = model.getGameLocations();
+        return locationMap.containsKey(entity.toLowerCase());
     }
 
     private void executeConsume(GameAction action){
-        //Is the entity present in player's inventory or in the environment?
-        //If it is health, deduct health from player.
-        //If health drops to 0, all items dropped to location as artefacts. Player transfer back to starting location
-        //after this, build health built in function! - display player's health
+        //Check Entity is a location or not
+        for (String entity : action.getConsumed()){
+            String entityLowerCase = entity.toLowerCase();
+            if (isEntityLocation(entityLowerCase)){
+                //Add location path to current location
+                Location newLocation = model.getGameLocations().get(entityLowerCase);
+                player.getCurrentLocation().dropPath(newLocation);
+            }
+            else{
+                //Move entity from original location to current location
+                Location storeroom = model.getGameLocations().get("storeroom");
+                GameEntity entityToMove = extractEntityFromOriginalLocation(entityLowerCase);
+                moveEntityToGivenLocation(storeroom, entityToMove);
+            }
+        }
+
     }
 }

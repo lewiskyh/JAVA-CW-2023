@@ -70,7 +70,7 @@ public class GameModel {
 
     public void interpretLocation(Graph locationGraph) {
         Node locationDetails = locationGraph.getNodes(false).get(0);
-        String locationName = locationDetails.getId().getId();
+        String locationName = locationDetails.getId().getId().toLowerCase();
         String description = locationDetails.getAttribute("description");
         Location location = new Location(locationName, description);
 
@@ -104,6 +104,7 @@ public class GameModel {
                         Artefact artefactObject = new Artefact(name, description);
                         this.existingEntities.add(name);
                         location.addArtefact(artefactObject);
+                        artefactObject.setLocation(location.getName());
                     }
                     break;
                 case "characters":
@@ -113,6 +114,7 @@ public class GameModel {
                         GameCharacter characterObject = new GameCharacter(name, description);
                         this.existingEntities.add(name);
                         location.addCharacter(characterObject);
+                        characterObject.setLocation(location.getName());
                     }
                     break;
                 case "furniture":
@@ -122,6 +124,7 @@ public class GameModel {
                         Furniture furnitureObject = new Furniture(name, description);
                         this.existingEntities.add(name);
                         location.addFurniture(furnitureObject);
+                        furnitureObject.setLocation(location.getName());
                     }
                     break;
                 default:
@@ -213,6 +216,10 @@ public class GameModel {
         }
     }
 
+    public HashMap<String, Location> getGameLocations() {
+        return gameLocations;
+    }
+
     public Location getLocation (String locationName){ return this.gameLocations.get(locationName);}
 
     public Location getStartingLocation(){ return this.startingLocation; }
@@ -226,4 +233,5 @@ public class GameModel {
     }
 
     public void addPlayer (String playerName){ this.players.put(playerName, new Player(playerName)); }
+
 }

@@ -26,6 +26,8 @@ public class Location extends GameEntity{
     public void addFurniture(Furniture furniture){ furnitureList.add(furniture); }
     public void addPath(Location path){ pathList.add(path); }
 
+    public void dropPath(Location path){ pathList.remove(path); }
+
     /* For a given name, return the artefact, character, furniture or path object*/
 
     public Artefact getArtefact(String name){
@@ -67,6 +69,24 @@ public class Location extends GameEntity{
         for (Artefact artefact : this.artefactList){
             if(artefact.getName().equalsIgnoreCase(artefactName)){
                 artefactList.remove(artefact);
+                break;
+            }
+        }
+    }
+
+    public void removeCharacter(String characterName){
+        for (GameCharacter character : this.characterList){
+            if(character.getName().equalsIgnoreCase(characterName)){
+                characterList.remove(character);
+                break;
+            }
+        }
+    }
+
+    public void removeFurniture(String furnitureName){
+        for (Furniture furniture : this.furnitureList){
+            if(furniture.getName().equalsIgnoreCase(furnitureName)){
+                furnitureList.remove(furniture);
                 break;
             }
         }
