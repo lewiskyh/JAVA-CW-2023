@@ -14,7 +14,7 @@ public class GameControl {
     private String actualCommandString;
 
     private GameCommand command;
-    private String[] basicCommands = {"look", "goto", "get", "drop", "inventory", "inv", "health"};
+    private final String[] basicCommands = {"look", "goto", "get", "drop", "inventory", "inv", "health"};
     private Set<String> tailoredCommandTrigger;
 
     public GameControl(GameModel model){
@@ -90,10 +90,6 @@ public class GameControl {
         }
     }
 
-    public GameCommand getCommand(){
-        return this.command;
-    }
-
     private String getActionTrigger (String actualCommand) {
 
         //Combine both basic and tailored triggers
@@ -144,5 +140,5 @@ public class GameControl {
     public GameModel getModel() { return this.model; }
 
 
-
+    public GameCommand getCommand() { return this.command; }
 }

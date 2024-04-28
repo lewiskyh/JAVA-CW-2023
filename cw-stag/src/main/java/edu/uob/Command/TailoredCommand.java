@@ -32,7 +32,7 @@ public class TailoredCommand extends GameCommand{
             if (isAtLeastOneSubjectProvided(action, commandFragments)){
                 actionMatched++;
                 if (actionMatched > 1){
-                    throw new RuntimeException("More than one possible action identified. Please specify subjects.");
+                    throw new RuntimeException("More than one possible action possible. Please specify.");
                 }
                 actionToExecute = action;
             }
