@@ -216,5 +216,7 @@ public class ExtendedFileSTAGTests {
         assertTrue(response.contains("neill"), "neill restarted");
     }
 
+    //Test consumed location?
+
 
 }
