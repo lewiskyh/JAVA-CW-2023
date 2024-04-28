@@ -130,5 +130,89 @@ class ExampleSTAGTests {
         assertFalse(response.contains("axe"), "Axe should not be in the inventory after the drop command");
     }
 
+    //Test the Basic action from now on
+    @Test
+
+    void testBasicProduceConsume1(){
+        sendCommandToServer("simon: get axe");
+        sendCommandToServer("simon: goto forest");
+        //tested - cut tree, cut with axe, cut tree with axe
+        String response = sendCommandToServer("simon: cut with axe");
+        assertTrue(response.contains("You cut down the tree with the axe"));
+        response = sendCommandToServer("simon: look");
+        //Tree gone, log is produced
+        assertFalse(response.contains("tree"));
+        assertTrue(response.contains("log"));
+        response = sendCommandToServer("simon: inv");
+        assertFalse(response.contains("log"));
+        sendCommandToServer("simon: get log");
+        response = sendCommandToServer("simon: inv");
+        assertTrue(response.contains("log"));
+    }
+
+    @Test
+    void testBasicProduceConsume2(){
+        sendCommandToServer("simon: get POTION");
+        sendCommandToServer("simon: get axe");
+        sendCommandToServer("simon: goto forest");
+        //tested - cut tree, cut with axe, cut tree with axe
+        //assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: cut tree with axe"));
+        sendCommandToServer("simon: get key");
+        String response = sendCommandToServer("simon: inv");
+        assertTrue(response.contains("key"));
+        assertTrue(response.contains("axe"));
+        //Trapdoor is not present in forest
+        assertThrows(RuntimeException.class, ()-> sendCommandToServer("simon: unlock trapdoor"));
+        sendCommandToServer("simon: goto cabin");
+        response = sendCommandToServer("simon: trapdoor unlock");
+        assertTrue(response.contains("You unlock the trapdoor and see steps leading down into a cellar"));
+        response = sendCommandToServer("simon: look");
+        //Trapdoor wont be consumed
+        assertTrue(response.contains("trapdoor"));
+        response = sendCommandToServer("simon: inv");
+        assertFalse(response.contains("key"));
+        //Assert that trapdoor is unlocked and that can go to cellar
+        sendCommandToServer("simon: goto cellar");
+        response = sendCommandToServer("simon: look");
+        assertTrue(response.contains("elf"));
+        sendCommandToServer("simon: hit elf");
+        sendCommandToServer("simon: hit elf");
+        response = sendCommandToServer("simon: health");
+        assertTrue(response.contains("1"));
+        sendCommandToServer("simon: drink potion");
+        response = sendCommandToServer("simon: health");
+        assertTrue(response.contains("2"));
+        response = sendCommandToServer("simon: inv");
+        assertFalse(response.contains("potion"));
+        sendCommandToServer("simon: hit elf");
+        response = sendCommandToServer("simon: hit elf");
+        assertTrue(response.contains("LOSER"));
+        //player is dead and needs to restart the game in starting position
+        response = sendCommandToServer("simon: health");
+        assertTrue(response.contains("3"));
+        response = sendCommandToServer("simon: look");
+        assertTrue(response.contains("cabin"));
+        response = sendCommandToServer("simon: inv");
+        assertFalse(response.contains("axe"));
+        //Player's items should have lost and located at dead scene
+        //Cellar was opened before player died. Should remain open
+        sendCommandToServer("simon: goto cellar");
+        response = sendCommandToServer("simon: look");
+        assertTrue(response.contains("axe"));
+
+    }
+
+    @Test
+    void testHealth(){
+      String response = sendCommandToServer("simon: health");
+      assertTrue(response.contains("3"));
+      sendCommandToServer("simon: get potion");
+      sendCommandToServer("simon: drink potion");
+      response = sendCommandToServer("simon: health");
+      //Max health is 3 - can drink potion but no effect
+      assertTrue(response.contains("3"));
+    }
+
+
 
 }

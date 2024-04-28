@@ -45,9 +45,9 @@ public class TailoredCommand extends GameCommand{
         }
         //Produce the entity.
         executeProduce(actionToExecute);
-        //Consume the entity.
-        executeConsume(actionToExecute);
-        return actionToExecute.getNarration();
+        //Consume the entity - only return meaningful if player is dead
+        String restartMessage = executeConsume(actionToExecute);
+        return actionToExecute.getNarration() + "\n" + restartMessage;
     }
 
     //To check if at least one subject in the command matches the subjects in action details
@@ -86,7 +86,10 @@ public class TailoredCommand extends GameCommand{
         //Check Entity is a location or not
         for (String entity : action.getProduced()){
             String entityLowerCase = entity.toLowerCase();
-            if (isEntityLocation(entityLowerCase)){
+            if(entityLowerCase.equalsIgnoreCase("health")) {
+                player.addHealth();
+            }
+            else if (isEntityLocation(entityLowerCase)){
                 //Add location path to current location
                 Location newLocation = model.getGameLocations().get(entityLowerCase);
                 player.getCurrentLocation().addPath(newLocation);
@@ -112,11 +115,13 @@ public class TailoredCommand extends GameCommand{
             newLocation.addFurniture((Furniture) entity);
         }
         else{
-            throw new RuntimeException("Null entity found");
+            throw new RuntimeException("Null entity ");
         }
     }
 
     private GameEntity extractEntityFromOriginalLocation(String entity){
+        //Search player's inventory first
+
         for (Location location : model.getGameLocations().values()){
             GameEntity entityFound = findAndRemoveEntity(location, entity);
             if (entityFound != null){
@@ -128,6 +133,12 @@ public class TailoredCommand extends GameCommand{
 
 
     private GameEntity findAndRemoveEntity (Location location, String targetEntity){
+        for (Artefact artefact : player.getItemList()){
+            if (artefact.getName().equalsIgnoreCase(targetEntity)){
+                player.removeItem(artefact);
+                return artefact;
+            }
+        }
         for (GameEntity character : location.getCharacterList()){
             if (character.getName().equalsIgnoreCase(targetEntity)){
                 location.removeCharacter(targetEntity);
@@ -150,17 +161,27 @@ public class TailoredCommand extends GameCommand{
     }
 
 
-
+    //Check if the entity is a location
+    //@return true if the entity is a location
     private boolean isEntityLocation(String entity){
         HashMap<String, Location> locationMap = model.getGameLocations();
         return locationMap.containsKey(entity.toLowerCase());
     }
 
-    private void executeConsume(GameAction action){
+    //Execute "consume" of the action - remove the consumed entities from the location or player's inventory
+    private String executeConsume(GameAction action){
         //Check Entity is a location or not
         for (String entity : action.getConsumed()){
             String entityLowerCase = entity.toLowerCase();
-            if (isEntityLocation(entityLowerCase)){
+            if(entityLowerCase.equalsIgnoreCase("health")) {
+                player.reduceHealth();
+                if(player.getHealth() == 0){
+                    player.playerLostAllItems();
+                    player.playerRestartGame(model);
+                    return "You are dead, LOSER! Game restarted.\n";
+                }
+            }
+            else if (isEntityLocation(entityLowerCase)){
                 //Add location path to current location
                 Location newLocation = model.getGameLocations().get(entityLowerCase);
                 player.getCurrentLocation().dropPath(newLocation);
@@ -170,8 +191,9 @@ public class TailoredCommand extends GameCommand{
                 Location storeroom = model.getGameLocations().get("storeroom");
                 GameEntity entityToMove = extractEntityFromOriginalLocation(entityLowerCase);
                 moveEntityToGivenLocation(storeroom, entityToMove);
+
             }
         }
-
+        return "";
     }
 }

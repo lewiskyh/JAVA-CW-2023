@@ -14,7 +14,7 @@ public class GameControl {
     private String actualCommandString;
 
     private GameCommand command;
-    private String[] basicCommands = {"look", "goto", "get", "drop", "inventory", "inv"};
+    private String[] basicCommands = {"look", "goto", "get", "drop", "inventory", "inv", "health"};
     private Set<String> tailoredCommandTrigger;
 
     public GameControl(GameModel model){
@@ -80,6 +80,9 @@ public class GameControl {
                 break;
             case "inventory", "inv":
                 this.command = new InventoryCommand(this.model, this.currentPlayer, this.actualCommandString);
+                break;
+            case "health":
+                this.command = new HealthCommand(this.model, this.currentPlayer, this.actualCommandString);
                 break;
             default:
                 this.command = new TailoredCommand(this.model, this.currentPlayer, this.actualCommandString, trigger);
