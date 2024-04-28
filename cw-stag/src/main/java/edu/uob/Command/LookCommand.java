@@ -26,11 +26,23 @@ public class LookCommand extends GameCommand {
             sb.append("\n");
         }
         sb.append("Characters: ");
-        for (GameCharacter character : currentLocation.getCharacterList()){
+        for (GameCharacter character : currentLocation.getCharacterList()) {
             sb.append(character.getName());
             sb.append(" -> ");
             sb.append(character.getDescription());
             sb.append("\n");
+        }
+        sb.append("Other players: ");
+        for (Player playerToCheck : model.getPlayers()){
+            String playerToCheckName = playerToCheck.getName();
+            String playerToCheckLocation = playerToCheck.getCurrentLocationName();
+            if (!playerToCheckName.equals(this.player.getName()) &&
+                    playerToCheckLocation.equals(currentLocationName)){
+                sb.append(playerToCheckName);
+                sb.append(" -> ");
+                sb.append(playerToCheck.getDescription());
+                sb.append("\n");
+            }
         }
         sb.append("Furniture: ");
         for (Furniture furniture : currentLocation.getFurnitureList()){

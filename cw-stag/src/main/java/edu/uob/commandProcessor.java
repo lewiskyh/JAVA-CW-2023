@@ -15,7 +15,7 @@ public class commandProcessor {
     /**
      * Split the command into PlayerName and Command parts
      * Set the playername internally
-     * remove any symbols from the command
+     * remove any symbols from the actual command (after ":" )
      * @return the command part of the full command
      */
     public String commandCleaning() {

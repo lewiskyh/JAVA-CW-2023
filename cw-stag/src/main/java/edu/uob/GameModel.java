@@ -232,6 +232,10 @@ public class GameModel {
         return this.players.get(playerName);
     }
 
+    public Set<Player> getPlayers(){
+        return new HashSet<>(this.players.values());
+    }
+
     public void addPlayer (String playerName){ this.players.put(playerName, new Player(playerName)); }
 
 }

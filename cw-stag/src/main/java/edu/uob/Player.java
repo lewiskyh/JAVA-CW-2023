@@ -53,4 +53,8 @@ public class Player extends GameCharacter{
     public int getHealth(){
         return this.health;
     }
+
+    public String getCurrentLocationName(){
+        return currentLocation.getName();
+    }
 }

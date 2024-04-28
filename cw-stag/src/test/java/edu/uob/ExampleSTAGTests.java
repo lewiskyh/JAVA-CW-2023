@@ -194,7 +194,7 @@ class ExampleSTAGTests {
         assertTrue(response.contains("cabin"));
         response = sendCommandToServer("simon: inv");
         assertFalse(response.contains("axe"));
-        //Player's items should have lost and located at dead scene
+        //Player should lose all items when HP drops to zero and items remain at dead scene
         //Cellar was opened before player died. Should remain open
         sendCommandToServer("simon: goto cellar");
         response = sendCommandToServer("simon: look");
@@ -211,6 +211,7 @@ class ExampleSTAGTests {
       response = sendCommandToServer("simon: health");
       //Max health is 3 - can drink potion but no effect
       assertTrue(response.contains("3"));
+      assertFalse(response.contains("4"));
     }
 
 
