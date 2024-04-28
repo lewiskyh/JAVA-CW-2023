@@ -36,6 +36,8 @@ public class GameControl {
         checkTriggerNumber(this.actualCommandString, this.tailoredCommandTrigger, this.basicCommands);
         //Add player to gameModel if not exists already
         if (this.model.getPlayer(this.currentPlayer) == null) {
+            if(!checkValidName(this.currentPlayer)){ throw new RuntimeException("Invalid player name. " +
+                    "Please use only letters, spaces, hyphens and apostrophes."); }
             this.model.addPlayer(this.currentPlayer);
             //Set the player's starting location
             this.model.getPlayer(this.currentPlayer).setCurrentLocation(this.model.getStartingLocation());
@@ -44,6 +46,11 @@ public class GameControl {
         //The trigger returned must be a valid trigger
         return getActionTrigger(this.actualCommandString);
     }
+
+    public boolean checkValidName(String name){
+        return name.matches("[A-Za-z '\\-]+");
+    }
+
 
     private void checkTriggerNumber(String actualCommandString, Set<String> tailoredCommandTrigger, String[] basicCommands){
         String [] commandFragments = actualCommandString.split(" ");

@@ -170,7 +170,7 @@ public class TailoredCommand extends GameCommand{
 
     //Execute "consume" of the action - remove the consumed entities from the location or player's inventory
     private String executeConsume(GameAction action){
-        //Check Entity is a location or not
+        //Health command?
         for (String entity : action.getConsumed()){
             String entityLowerCase = entity.toLowerCase();
             if(entityLowerCase.equalsIgnoreCase("health")) {
@@ -181,6 +181,7 @@ public class TailoredCommand extends GameCommand{
                     return "You are dead, LOSER! Game restarted.\n";
                 }
             }
+            //Check Entity is a location or NOT
             else if (isEntityLocation(entityLowerCase)){
                 //Add location path to current location
                 Location newLocation = model.getGameLocations().get(entityLowerCase);

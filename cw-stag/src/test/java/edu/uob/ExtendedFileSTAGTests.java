@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -177,13 +180,13 @@ public class ExtendedFileSTAGTests {
         assertTrue(response.contains("sion"), "sion is also in the starting location");
         assertThrows(RuntimeException.class, () -> sendCommandToServer("neill: get coin"), "coin is already taken by simon");
         assertThrows(RuntimeException.class, () -> sendCommandToServer("neill: get axe"), "axe is already taken by sion");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("MSC213!?: get coin"), "coin is already taken by simon");
-        sendCommandToServer("evil? msc-student: get potion");
+        assertThrows(RuntimeException.class, () -> sendCommandToServer("MSC213: get coin"), "coin is already taken by simon");
+        sendCommandToServer("evil's msc-student: get potion");
         response = sendCommandToServer("neill: look");
-        assertTrue(response.contains("evil? msc-student"), "evil msc-student is also in the starting location");
+        assertTrue(response.contains("evil's msc-student"), "evil's msc-student is also in the starting location");
         assertTrue(response.contains("simon"), "simon is also in the starting location");
         assertTrue(response.contains("sion"), "sion is also in the starting location");
-        assertTrue(response.contains("MSC213!?"), "potion is in the starting location");
+        assertFalse(response.contains("MSC213"), "MSC213: get coin was invalid - so player not in the game yet");
         sendCommandToServer("neill: goto forest");
         assertThrows(RuntimeException.class, () -> sendCommandToServer("neill: cut down tree"), "neill does not have axe");
         sendCommandToServer("neill: get key"); sendCommandToServer("neill: goto cabin");
@@ -196,27 +199,49 @@ public class ExtendedFileSTAGTests {
         sendCommandToServer("neill: attack elf to death");
         response= sendCommandToServer("neill: health");
         assertTrue(response.contains("1"), "neill should have 1 health");
-        sendCommandToServer("evil? msc-student: goto cellar");
-        sendCommandToServer("evil? msc-student: drop potion for neill");
+        sendCommandToServer("evil's msc-student: goto cellar");
+        sendCommandToServer("evil's msc-student: drop potion for neill");
         sendCommandToServer("neill: get potion");
         sendCommandToServer("neill: potion DRINk ASAP");
         response = sendCommandToServer("neill: health");
         assertTrue(response.contains("2"), "neill should have 3 health");
         sendCommandToServer("neill: attack elf to death");
         sendCommandToServer("neill: attack elf to death");
-        response = sendCommandToServer("evil? msc-student: look");
+        response = sendCommandToServer("evil's msc-student: look");
         assertTrue(response.contains("axe"), "axe should be at the location neill died");
         assertFalse(response.contains("neill"), "neill should be at cabin");
-        sendCommandToServer("evil? msc-student: get axe");
-        response = sendCommandToServer("evil? msc-student: inv");
+        sendCommandToServer("evil's msc-student: get axe");
+        response = sendCommandToServer("evil's msc-student: inv");
         assertTrue(response.contains("axe"), "Failed to get axe in inventory");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("evil? msc-student: goto attack elf"), "2 valid triggers");
-        sendCommandToServer("evil? msc-student: goto cabin");
-        response = sendCommandToServer("evil? msc-student: look");
+        assertThrows(RuntimeException.class, () -> sendCommandToServer("evil's msc-student: goto attack elf"), "2 valid triggers");
+        sendCommandToServer("evil's msc-student: goto cabin");
+        response = sendCommandToServer("evil's msc-student: look");
         assertTrue(response.contains("neill"), "neill restarted");
+        assertThrows(RuntimeException.class, () -> sendCommandToServer("student@ uob: get axe"), "invalid username");
+
+    }
+
+    @Test
+
+    void testConsumedInStoreroom(){
+        sendCommandToServer("simon: GET AXE");
+        sendCommandToServer("simon: GOTO forest");
+        sendCommandToServer("simon: tree cut down");
+        String response = sendCommandToServer("simon: look");
+        assertFalse(response.contains("tree"));
+        GameModel model = server.getModel();
+        List<Furniture> furnitureList = model.getLocation("storeroom").getFurnitureList();
+        ArrayList<String> furnitureNames= new ArrayList<>();
+        for (Furniture furniture : furnitureList){
+            furnitureNames.add(furniture.getName());
+        }
+        assertTrue(furnitureNames.contains("tree"));
+
+
     }
 
     //Test consumed location?
+    
 
 
 }
