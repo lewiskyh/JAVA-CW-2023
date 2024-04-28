@@ -225,9 +225,16 @@ public class ExtendedFileSTAGTests {
 
     void testConsumedInStoreroom(){
         sendCommandToServer("simon: GET AXE");
+        assertThrows(RuntimeException.class,() ->sendCommandToServer("simon: get potion and drink"));
+        sendCommandToServer("simon: GET potion");
+        String response = sendCommandToServer("simon: look");
+        assertFalse(response.contains("potion"));
+        sendCommandToServer("simon: drink potion");
+        response = sendCommandToServer("simon: inventory");
+        assertFalse(response.contains("potion"));
         sendCommandToServer("simon: GOTO forest");
         sendCommandToServer("simon: tree cut down");
-        String response = sendCommandToServer("simon: look");
+        response = sendCommandToServer("simon: look");
         assertFalse(response.contains("tree"));
         GameModel model = server.getModel();
         List<Furniture> furnitureList = model.getLocation("storeroom").getFurnitureList();
@@ -236,8 +243,12 @@ public class ExtendedFileSTAGTests {
             furnitureNames.add(furniture.getName());
         }
         assertTrue(furnitureNames.contains("tree"));
-
-
+        List<Artefact> artefactList = model.getLocation("storeroom").getArtefactList();
+        ArrayList<String> arterfaceNames = new ArrayList<>();
+        for (Artefact artefact : artefactList){
+            arterfaceNames.add(artefact.getName());
+        }
+        assertTrue(arterfaceNames.contains("potion"));
     }
 
     //Test consumed location?
