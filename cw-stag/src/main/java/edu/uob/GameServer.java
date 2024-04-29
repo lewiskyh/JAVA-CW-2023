@@ -5,7 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
 
+import com.alexmerz.graphviz.ParseException;
 import edu.uob.Command.GameCommand;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 
 public final class GameServer {
@@ -48,10 +52,15 @@ public final class GameServer {
     public String handleCommand(String command) {
         // TODO implement your server logic here
         GameCommand gameCommand;
-        String trigger = this.control.preprocessCommand(command);
-        this.control.processCommand(trigger);
-        gameCommand = this.control.getCommand();
-        return gameCommand.execute();
+        try {
+            String trigger = this.control.preprocessCommand(command);
+            this.control.processCommand(trigger);
+            gameCommand = this.control.getCommand();
+            return gameCommand.execute();
+        }catch (RuntimeException e ){
+            return "ERROR : " + e.getMessage();
+        }
+
     }
 
     /**

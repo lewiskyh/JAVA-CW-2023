@@ -76,7 +76,7 @@ public class ExtendedFileSTAGTests {
     void testCutDown(){
         sendCommandToServer("simon: get axe");
         sendCommandToServer("simon: goto forest");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: cutdown tree"), "cutdown is not valid trigger here");
+        assertTrue(sendCommandToServer("simon: cutdown tree").contains("ERROR"));
         String response = sendCommandToServer("simon: look");
         assertFalse(response.contains("log"), "Faile to cut down tree and produce log");
         sendCommandToServer("simon: cut down tree");
@@ -96,11 +96,13 @@ public class ExtendedFileSTAGTests {
         sendCommandToServer("simon: get key");
         sendCommandToServer("simon: goto cabin");
         sendCommandToServer("simon: trapdoor unlock");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: pay elf"), "elf is in cellar");
+        String response = sendCommandToServer("simon: pay elf");
+        assertTrue(response.contains("ERROR"), "Your location does not have elf");
         sendCommandToServer("simon: goto cellar");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: pay"), "missing subject in pay command");
+        response = sendCommandToServer("simon: pay");
+        assertTrue(response.contains("ERROR"), "Missing subject for your pay trigger");
         sendCommandToServer("simon: pay my coin");
-        String response = sendCommandToServer("simon: look");
+        response = sendCommandToServer("simon: look");
         assertTrue(response.contains("shovel"), "Failed to pay elf and produce shovel");
         sendCommandToServer("simon: get shovel");
         response = sendCommandToServer("simon: look");
@@ -112,23 +114,27 @@ public class ExtendedFileSTAGTests {
         response = sendCommandToServer("simon: get log");
         assertTrue(response.contains("log"), "Failed to get log");
         sendCommandToServer("simon: goto riverbank");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: goto clearing"), "Clearing is not accessible");
+        response = sendCommandToServer("simon: goto clearing");
+        assertTrue(response.contains("ERROR"), "No path to clearing");
         sendCommandToServer("simon: bridge with log");
         response = sendCommandToServer("simon: look");
         assertTrue(response.contains("clearing"), "Failed to create new path to clearing");
         sendCommandToServer("simon: goto clearing");
         response = sendCommandToServer("simon: look");
         assertTrue(response.contains("ground"), "Failed to move to clearing and see ground");
+        assertTrue(response.contains("clearing"), "Failed to move to clearing and see ground");
         sendCommandToServer("simon: dig ground");
         response = sendCommandToServer("simon: look");
         assertTrue(response.contains("gold"), "Failed to dig ground and produce gold");
         assertTrue(response.contains("hole"), "Failed to dig ground and produce hole");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: get hole"), "hole is a furniture");
+        response= sendCommandToServer("simon: get hole");
+        assertTrue(response.contains("ERROR"), "Hole is furniture");
         response = sendCommandToServer("simon: inv");
         assertFalse(response.contains("gold"), "gold should not be in inventory");
         sendCommandToServer("simon: get gold");
         sendCommandToServer("simon: goto riverbank"); sendCommandToServer("simon: goto forest");sendCommandToServer("simon: goto cabin");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: unlock trapdoor"), "key is used already!");
+        response =  sendCommandToServer("simon: unlock trapdoor");
+        assertTrue(response.contains("ERROR"), "Trapdoor is already unlocked using your key");
         sendCommandToServer("simon: goto cellar");
         sendCommandToServer("simon: attack elf to dead");
         sendCommandToServer("simon: attack elf to steal money");
@@ -164,7 +170,8 @@ public class ExtendedFileSTAGTests {
         assertTrue(response.contains("You blow the horn and as if by magic, a lumberjack appears !"), "Failed to blow horn and produce unicorn");
         response = sendCommandToServer("simon: look");
         assertTrue(response.contains("lumberjack"), "Failed to blow horn and produce unicorn");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: get lumberjack"), "lumberjack is a character! Not an artefact!");
+        response = sendCommandToServer("simon: get lumberjack");
+        assertTrue(response.contains("ERROR"), "Lumberjack is character");
         response = sendCommandToServer("simon: inv");
         assertTrue(response.contains("horn"), "horn should not be consumed");
     }
@@ -178,9 +185,9 @@ public class ExtendedFileSTAGTests {
         String response = sendCommandToServer("neill: look");
         assertTrue(response.contains("simon"), "simon is also in the starting location");
         assertTrue(response.contains("sion"), "sion is also in the starting location");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("neill: get coin"), "coin is already taken by simon");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("neill: get axe"), "axe is already taken by sion");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("MSC213: get coin"), "coin is already taken by simon");
+        assertTrue(sendCommandToServer("neill: get coin").contains("ERROR"));
+        assertTrue(sendCommandToServer("neill: get axe").contains("ERROR"));
+        assertTrue(sendCommandToServer("MSC213: get coin").contains("ERROR"));
         sendCommandToServer("evil's msc-student: get potion");
         response = sendCommandToServer("neill: look");
         assertTrue(response.contains("evil's msc-student"), "evil's msc-student is also in the starting location");
@@ -188,7 +195,7 @@ public class ExtendedFileSTAGTests {
         assertTrue(response.contains("sion"), "sion is also in the starting location");
         assertFalse(response.contains("MSC213"), "MSC213: get coin was invalid - so player not in the game yet");
         sendCommandToServer("neill: goto forest");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("neill: cut down tree"), "neill does not have axe");
+        assertTrue(sendCommandToServer("neill: cut down tree").contains("ERROR"));
         sendCommandToServer("neill: get key"); sendCommandToServer("neill: goto cabin");
         sendCommandToServer("sion: drop axe");
         sendCommandToServer("neill: get axe");
@@ -213,11 +220,11 @@ public class ExtendedFileSTAGTests {
         sendCommandToServer("evil's msc-student: get axe");
         response = sendCommandToServer("evil's msc-student: inv");
         assertTrue(response.contains("axe"), "Failed to get axe in inventory");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("evil's msc-student: goto attack elf"), "2 valid triggers");
+        assertTrue(sendCommandToServer("evil's msc-student: goto attack elf").contains("ERROR"));
         sendCommandToServer("evil's msc-student: goto cabin");
         response = sendCommandToServer("evil's msc-student: look");
         assertTrue(response.contains("neill"), "neill restarted");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("student@ uob: get axe"), "invalid username");
+        assertTrue(sendCommandToServer("student@ uob: get axe").contains("ERROR"));
 
     }
 
@@ -225,7 +232,7 @@ public class ExtendedFileSTAGTests {
 
     void testConsumedInStoreroom(){
         sendCommandToServer("simon: GET AXE");
-        assertThrows(RuntimeException.class,() ->sendCommandToServer("simon: get potion and drink"));
+        assertTrue(sendCommandToServer("simon: get potion and drink").contains("ERROR"));
         sendCommandToServer("simon: GET potion");
         String response = sendCommandToServer("simon: look");
         assertFalse(response.contains("potion"));
@@ -251,8 +258,22 @@ public class ExtendedFileSTAGTests {
         assertTrue(arterfaceNames.contains("potion"));
     }
 
-    //Test consumed location?
-    
+    @Test
+
+    void testAmbiguous(){
+        assertTrue(sendCommandToServer("simon: GET the AXE and POTION").contains("ERROR"));
+        assertTrue(sendCommandToServer("simon: GET the POTION").contains("potion"));
+        assertTrue(sendCommandToServer("simon: INV     see").contains("potion"));
+        assertTrue(sendCommandToServer("simon: drop potion").contains("dropped"));
+        assertTrue(sendCommandToServer("simon: drop AXE").contains("ERROR"));
+    }
+
+    @Test
+
+    void testMultiPossibleActions(){
+        sendCommandToServer("simon: goto forest");
+        assertTrue(sendCommandToServer("simon: goto cabin and riverbank").contains("ERROR"));
+    }
 
 
 }

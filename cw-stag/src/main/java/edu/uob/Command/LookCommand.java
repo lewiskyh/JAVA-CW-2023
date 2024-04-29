@@ -25,6 +25,7 @@ public class LookCommand extends GameCommand {
             sb.append(artefact.getDescription());
             sb.append("\n");
         }
+        sb.append("\n");
         sb.append("Characters: ");
         for (GameCharacter character : currentLocation.getCharacterList()) {
             sb.append(character.getName());
@@ -32,6 +33,7 @@ public class LookCommand extends GameCommand {
             sb.append(character.getDescription());
             sb.append("\n");
         }
+        sb.append("\n");
         sb.append("Other players: ");
         for (Player playerToCheck : model.getPlayers()){
             String playerToCheckName = playerToCheck.getName();
@@ -44,6 +46,7 @@ public class LookCommand extends GameCommand {
                 sb.append("\n");
             }
         }
+        sb.append("\n");
         sb.append("Furniture: ");
         for (Furniture furniture : currentLocation.getFurnitureList()){
             sb.append(furniture.getName());
@@ -51,6 +54,7 @@ public class LookCommand extends GameCommand {
             sb.append(furniture.getDescription());
             sb.append("\n");
         }
+        sb.append("\n");
         sb.append("You can go to: ");
         for (Location path : currentLocation.getPathList()){
             sb.append(path.getName());

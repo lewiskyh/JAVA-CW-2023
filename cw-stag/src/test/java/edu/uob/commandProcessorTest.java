@@ -33,4 +33,6 @@ public class commandProcessorTest {
         assertEquals("LOOK at POTION in the room", processor.commandCleaning());
     }
 
+
+
 }

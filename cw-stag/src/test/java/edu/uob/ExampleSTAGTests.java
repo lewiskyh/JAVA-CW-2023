@@ -80,12 +80,14 @@ class ExampleSTAGTests {
     @Test
     void testbadGoto(){
       //No path from cabin to cellar
-      assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: goto cellar"));
+      String response = sendCommandToServer("simon: goto cellar");
+      assertTrue(response.contains("ERROR"), "No path from cabin to cellar");
       sendCommandToServer("simon: goto forest");
-      String response = sendCommandToServer("simon: look");
+      response = sendCommandToServer("simon: look");
       response = response.toLowerCase();
       assertTrue(response.contains("a dark forest"), "Failed attempt to use 'goto' command to move to the forest - there is no key in the current location");
-      assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: goto cellar"));
+      response = sendCommandToServer("simon: goto cellar");
+        assertTrue(response.contains("ERROR"), "No path from forest to cellar");
       sendCommandToServer("simon: goto cabin");
       response = sendCommandToServer("simon: look");
       response = response.toLowerCase();
@@ -96,8 +98,9 @@ class ExampleSTAGTests {
 
     void testComplexGetDrop(){
       //Can only get one item
-      assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: get potion and axe"));
-      String response = sendCommandToServer("simon: inv");
+        String response = sendCommandToServer("simon: get potion and axe");
+        assertTrue(response.contains("ERROR"), "Invalid get command, cannot get two items at once");
+      response = sendCommandToServer("simon: inv");
       response = response.toLowerCase();
       assertFalse(response.contains("potion"), "Invalid get command, potion should not be in the inventory");
       assertFalse(response.contains("axe"), "Invalid get command, axe should not be in the inventory");
@@ -119,9 +122,9 @@ class ExampleSTAGTests {
     void testComplexGetDrop2(){
         sendCommandToServer("simon: get axe");
         sendCommandToServer("simon: get potion");
-        assertThrows(RuntimeException.class, () -> sendCommandToServer("simon: drop axe and potion"));
-        String response = sendCommandToServer("simon: inv");
-        response = response.toLowerCase();
+        String response = sendCommandToServer("simon: drop axe and potion");
+        assertTrue(response.contains("ERROR"), "Invalid drop command, cannot drop two items at once");
+        response = sendCommandToServer("simon: inv");
         assertTrue(response.contains("potion"), "Potion should be in the inventory after the invalid drop command");
         assertTrue(response.contains("axe"), "Axe should be in the inventory after the invalid drop command");
         sendCommandToServer("simon: drop axe");
@@ -162,7 +165,8 @@ class ExampleSTAGTests {
         assertTrue(response.contains("key"));
         assertTrue(response.contains("axe"));
         //Trapdoor is not present in forest
-        assertThrows(RuntimeException.class, ()-> sendCommandToServer("simon: unlock trapdoor"));
+        response = sendCommandToServer("simon: unlock trapdoor");
+        assertTrue(response.contains("ERROR"));
         sendCommandToServer("simon: goto cabin");
         response = sendCommandToServer("simon: trapdoor unlock");
         assertTrue(response.contains("You unlock the trapdoor and see steps leading down into a cellar"));
