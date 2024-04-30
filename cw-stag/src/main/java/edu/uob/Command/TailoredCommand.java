@@ -6,6 +6,7 @@ import java.util.*;
 
 public class TailoredCommand extends GameCommand{
 
+    //Constructor for TailoredCommand
     private final String trigger;
     public TailoredCommand(GameModel model, String playerName, String command, String trigger){
         super(model, playerName, command);
@@ -104,6 +105,8 @@ public class TailoredCommand extends GameCommand{
         }
     }
 
+    //Move entity from original location to a given location
+
     private void moveEntityToGivenLocation(Location newLocation, GameEntity entity){
         if (entity instanceof GameCharacter){
             newLocation.addCharacter((GameCharacter) entity);
@@ -119,6 +122,8 @@ public class TailoredCommand extends GameCommand{
         }
     }
 
+    //Extract entity from player's inventory or location
+
     private GameEntity extractEntityFromOriginalLocation(String entity){
         //Search player's inventory first
 
@@ -131,6 +136,8 @@ public class TailoredCommand extends GameCommand{
         return null;
     }
 
+
+    //Return the corresponding entity and remove it from the location or player's inventory
 
     private GameEntity findAndRemoveEntity (Location location, String targetEntity){
         for (Artefact artefact : player.getItemList()){

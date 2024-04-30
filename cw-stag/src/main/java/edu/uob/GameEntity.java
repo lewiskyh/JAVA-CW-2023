@@ -8,6 +8,7 @@ public abstract class GameEntity {
     private final String description;
     private String location;
 
+    //Constructor for GameEntity - parent class
     public GameEntity(String name, String description)
     {
         this.name = name;

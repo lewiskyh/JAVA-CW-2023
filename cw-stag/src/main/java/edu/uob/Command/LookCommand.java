@@ -4,9 +4,12 @@ import edu.uob.*;
 
 public class LookCommand extends GameCommand {
 
+    //Constructor for LookCommand
     public LookCommand(GameModel model, String playerName, String command){
         super(model, playerName, command);
     }
+
+    //Execute the look command
 
     @Override
     public String execute(){

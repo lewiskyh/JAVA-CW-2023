@@ -8,6 +8,8 @@ public class GameAction {
     private ArrayList<String> subjects;
     private ArrayList<String> triggers;
     private String narration;
+
+    //Constructor for GameAction
     public GameAction(){
         this.produced = new ArrayList<>();
         this.consumed = new ArrayList<>();

@@ -8,6 +8,8 @@ public class commandProcessor {
 
     private String playerName;
 
+    //Constructor for commandProcessor
+
     public commandProcessor(String fullCommand){
         this.fullCommand = fullCommand;
     }
@@ -36,7 +38,10 @@ public class commandProcessor {
 
     }
 
-
+    /**
+     * Get player name
+     * @return the player name in string
+     */
     public String getPlayerName(){
         return this.playerName;
     }

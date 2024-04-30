@@ -7,10 +7,12 @@ import java.util.List;
 
 public class DropCommand extends GameCommand{
 
+    //Constructor for DropCommand
     public DropCommand(GameModel model, String playerName, String command){
         super(model, playerName, command);
     }
 
+    //Execute the drop command
     @Override
     public String execute(){
         String currentLocationName = player.getCurrentLocation().getName();

@@ -40,6 +40,7 @@ public class Player extends GameCharacter{
         this.health = this.health - 1;
     }
 
+    //Copy all player's items to the current location and clear all from player
     public void playerLostAllItems(){
         for(Artefact artefact : items){
             currentLocation.addArtefact(artefact);

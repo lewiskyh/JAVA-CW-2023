@@ -5,10 +5,12 @@ import java.util.List;
 
 public class GetCommand extends GameCommand{
 
+    //Constructor for the GetCommand
     public GetCommand(GameModel model, String playerName, String command){
         super(model, playerName, command);
     }
 
+    //Execute the get command
     @Override
     public String execute() {
 

@@ -47,11 +47,13 @@ public class GameControl {
         return getActionTrigger(this.actualCommandString);
     }
 
+    //Check if player name is valid
+
     public boolean checkValidName(String name){
         return name.matches("[A-Za-z '\\-]+");
     }
 
-
+    //Check if the command has one trigger - if not equal to one throw exception
     private void checkTriggerNumber(String actualCommandString, Set<String> tailoredCommandTrigger, String[] basicCommands){
         String [] commandFragments = actualCommandString.split(" ");
         List<String> allTriggers = new ArrayList<>();
@@ -71,6 +73,7 @@ public class GameControl {
         }
     }
 
+    //Initialise the command object based on the trigger
     public void processCommand(String trigger){
         switch(trigger){
             case "look":
@@ -97,6 +100,8 @@ public class GameControl {
         }
     }
 
+    //Get the trigger of the command and return it in string
+
     private String getActionTrigger (String actualCommand) {
 
         //Combine both basic and tailored triggers
@@ -122,7 +127,7 @@ public class GameControl {
         return null;
     }
 
-
+    //Check if the command is a phrasal verb and return the trigger
     private String phrasalVerbHandler (String actualCommand, String trigger){
         String [] commandFragments = actualCommand.split(" ");
         String [] triggerFragments = trigger.split(" ");

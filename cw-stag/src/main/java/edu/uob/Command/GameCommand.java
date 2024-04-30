@@ -7,6 +7,8 @@ public class GameCommand {
     Player player;
     String command;
 
+    //Parent class to be inherited by all the command classes
+
     public GameCommand(GameModel model, String playerName, String command){
         this.model = model;
         this.player = this.model.getPlayer(playerName);
