@@ -76,6 +76,8 @@ public class TailoredCommand extends GameCommand{
         for (GameEntity entity : player.getItemList()){
             environmentSubjects.add(entity.getName().toLowerCase());
         }
+        //Add current location to the environment subjects in case the location is a subject in the action
+        environmentSubjects.add(currentLocation.getName().toLowerCase());
 
         for (String subject : action.getSubjects()){
             if(!environmentSubjects.contains(subject.toLowerCase())){ return false; }
