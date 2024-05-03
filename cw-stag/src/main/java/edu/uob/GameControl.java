@@ -146,11 +146,12 @@ public class GameControl {
 
         return null;
     }
-
+    //Get the current player in string
     public String getCurrentPlayer(){ return this.currentPlayer; }
 
+    //Get the model object
     public GameModel getModel() { return this.model; }
 
-
+    //get the command object
     public GameCommand getCommand() { return this.command; }
 }

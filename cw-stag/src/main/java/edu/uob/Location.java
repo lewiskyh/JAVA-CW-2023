@@ -22,14 +22,16 @@ public class Location extends GameEntity{
 
     /* Add artefact, character, furniture and path to the location */
     public void addArtefact(Artefact artefact){ artefactList.add(artefact); }
+    /* Add artefact, character, furniture and path to the location */
     public void addCharacter(GameCharacter character){ characterList.add(character); }
+    /* Add artefact, character, furniture and path to the location */
     public void addFurniture(Furniture furniture){ furnitureList.add(furniture); }
+    /* Add artefact, character, furniture and path to the location */
     public void addPath(Location path){ pathList.add(path); }
-
+    /* Drop path from the location */
     public void dropPath(Location path){ pathList.remove(path); }
 
     /* For a given name, return the artefact, character, furniture or path object*/
-
     public Artefact getArtefact(String name){
 
         for (Artefact artefact : artefactList){
@@ -37,19 +39,20 @@ public class Location extends GameEntity{
         }
         return null;
     }
+    /* For a given name, return the artefact, character, furniture or path object*/
     public GameCharacter getCharacter(String name){
         for (GameCharacter character : characterList){
             if(character.getName().equals(name)){ return character; }
         }
         return null;
     }
-
-    public Furniture getFurniture(String name){
+    //For a given name, return the artefact, character, furniture or path object
+    /*public Furniture getFurniture(String name){
         for (Furniture furniture : furnitureList){
             if(furniture.getName().equals(name)){ return furniture; }
         }
         return null;
-    }
+    }*/
     public Location getPath(String name){
         for (Location path : pathList){
             if(path.getName().equals(name)){ return path; }
@@ -57,14 +60,22 @@ public class Location extends GameEntity{
         return null;
     }
 
+    /* Getters for the location object */
     public String getName(){ return super.getName(); }
+
+    /* Getters for the location object */
     public String getDescription(){ return super.getDescription(); }
 
+    /* Get artefactlist */
     public List<Artefact> getArtefactList(){ return artefactList; }
+    /* Get characterlist */
     public List<GameCharacter> getCharacterList(){ return characterList; }
+    /* Get furniturelist */
     public List<Furniture> getFurnitureList(){ return furnitureList; }
+    /* Get pathlist */
     public List<Location> getPathList(){ return pathList; }
 
+    /* Remove artefact from the location */
     public void removeArtefact(String artefactName){
         for (Artefact artefact : this.artefactList){
             if(artefact.getName().equalsIgnoreCase(artefactName)){
@@ -73,6 +84,7 @@ public class Location extends GameEntity{
             }
         }
     }
+    /* Remove character from the location */
 
     public void removeCharacter(String characterName){
         for (GameCharacter character : this.characterList){
@@ -82,6 +94,7 @@ public class Location extends GameEntity{
             }
         }
     }
+    /* Remove furniture from the location */
 
     public void removeFurniture(String furnitureName){
         for (Furniture furniture : this.furnitureList){

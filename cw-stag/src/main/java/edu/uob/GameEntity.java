@@ -15,14 +15,18 @@ public abstract class GameEntity {
         this.description = description;
     }
 
+    //get entity name in string
     public String getName()
     {
         return name;
     }
 
+    //get entity description in string
     public String getDescription()  { return description;}
 
+    //set entity location
     public void setLocation (String location){ this.location = location;}
+    //get entity location in string
     public String getLocation(){ return location;}
 
 
